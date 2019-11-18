@@ -25,8 +25,8 @@ export class OrderDetailComponent implements OnInit {
 					this.id = params['id'];
 					this.orderService.getOrder(this.id)
 						.subscribe(
-							resp => {
-								this.order = resp.body;
+							responseOrder => {
+								this.order = responseOrder;
 							});
 				}
 			);

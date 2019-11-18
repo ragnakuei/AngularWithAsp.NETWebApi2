@@ -49,24 +49,24 @@ export class OrderEditComponent implements OnInit {
                     this.id = params['id'];
                     this.orderService.getOrder(this.id)
                         .subscribe(
-                            resp => {
+                            responseOrder => {
 
                                 this.orderForm.setValue({
-                                    OrderID: resp.body.OrderID,
-                                    CustomerID: resp.body.CustomerID,
-                                    EmployeeID: resp.body.EmployeeID,
-                                    OrderDate: resp.body.OrderDate,
-                                    RequiredDate: resp.body.RequiredDate,
-                                    ShippedDate: resp.body.ShippedDate,
-                                    ShipVia: resp.body.ShipVia,
-                                    Freight: resp.body.Freight,
-                                    ShipName: resp.body.ShipName,
-                                    ShipAddress: resp.body.ShipAddress,
-                                    ShipCity: resp.body.ShipCity,
-                                    ShipRegion: resp.body.ShipRegion,
-                                    ShipPostalCode: resp.body.ShipPostalCode,
-                                    ShipCountry: resp.body.ShipCountry,
-                                    // Detail: resp.body.Detail
+                                    OrderID: responseOrder.OrderID,
+                                    CustomerID: responseOrder.CustomerID,
+                                    EmployeeID: responseOrder.EmployeeID,
+                                    OrderDate: responseOrder.OrderDate,
+                                    RequiredDate: responseOrder.RequiredDate,
+                                    ShippedDate: responseOrder.ShippedDate,
+                                    ShipVia: responseOrder.ShipVia,
+                                    Freight: responseOrder.Freight,
+                                    ShipName: responseOrder.ShipName,
+                                    ShipAddress: responseOrder.ShipAddress,
+                                    ShipCity: responseOrder.ShipCity,
+                                    ShipRegion: responseOrder.ShipRegion,
+                                    ShipPostalCode: responseOrder.ShipPostalCode,
+                                    ShipCountry: responseOrder.ShipCountry,
+                                    // Detail: resp.Detail
                                 });
                             });
                 }
