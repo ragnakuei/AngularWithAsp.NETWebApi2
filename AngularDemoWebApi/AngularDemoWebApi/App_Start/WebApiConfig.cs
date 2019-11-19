@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Configuration;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Dispatcher;
@@ -12,8 +13,9 @@ namespace AngularDemoWebApi
         public static void Register(HttpConfiguration config)
         {
             // Web API 設定和服務
-            
-            var cors = new EnableCorsAttribute("http://localhost:4200", "*", "*");
+
+            var corsSite = ConfigurationManager.AppSettings["corsSite"];
+            var cors = new EnableCorsAttribute(corsSite, "*", "*");
             config.EnableCors(cors);
             
             // Web API 路由

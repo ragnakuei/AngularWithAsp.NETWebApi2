@@ -25,7 +25,7 @@ export class OrderDeleteComponent implements OnInit {
             );
     }
 
-    private confirmDelete(orderId: number) {
+    confirmDelete(orderId: number) {
         this.orderService.deleteOrder(orderId)
             .subscribe(
                 val => {
