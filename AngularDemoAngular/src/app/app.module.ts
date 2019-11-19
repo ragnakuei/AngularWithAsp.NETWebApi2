@@ -18,6 +18,7 @@ import { OrderItemComponent } from './order/order-list/order-item/order-item.com
 import { OrderEditComponent } from './order/order-edit/order-edit.component';
 import { OrderCreateComponent } from './order/order-create/order-create.component';
 import { OrderDeleteComponent } from './order/order-delete/order-delete.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { OrderDeleteComponent } from './order/order-delete/order-delete.componen
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule
   ],
   providers: [OrderService],
   bootstrap: [AppComponent]
