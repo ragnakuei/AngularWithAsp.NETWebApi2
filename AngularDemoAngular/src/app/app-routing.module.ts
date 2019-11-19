@@ -16,10 +16,10 @@ const routes: Routes = [
     path: 'order', component: OrderComponent
     , children: [
       { path: '', component: OrderListComponent },
-      { path: ':id', component: OrderDetailComponent },
+      { path: 'create', component: OrderCreateComponent },
+      { path: 'detail/:id', component: OrderDetailComponent },
       { path: 'edit/:id', component: OrderEditComponent },
       { path: 'delete/:id', component: OrderDeleteComponent },
-      { path: 'create/', component: OrderCreateComponent },
     ]
   },
 ];

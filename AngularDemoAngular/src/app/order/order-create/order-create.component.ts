@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormArray } from '@angular/forms';
 import { OrderService } from '../order.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Order } from 'src/app/models/Order';
@@ -33,25 +33,27 @@ export class OrderCreateComponent implements OnInit {
             ShipRegion: new FormControl(''),
             ShipPostalCode: new FormControl(''),
             ShipCountry: new FormControl(''),
-            // Detail : new FormGroup({
-            //     ProductID : new FormControl(''),
-            //     UnitPrice : new FormControl(''),
-            //     Quantity : new FormControl(''),
-            //     Discount : new FormControl(''),
-            // })[0]
+            Details : new FormArray([])
         });
+    }
+
+    addDetails()
+    {
+        (this.orderForm.get('Details') as FormArray).push(new FormGroup({
+            ProductID : new FormControl(''),
+            UnitPrice : new FormControl(''),
+            Quantity : new FormControl(''),
+            Discount : new FormControl(''),
+        }));
     }
 
     onSubmit(submitData: Order) {
         this.orderService.createOrder(submitData)
             .subscribe(
                 val => {
-                    this.router.navigate(['/order/' + val]);
+                    this.router.navigate(['/order/detail/' + val]);
                 },
-                err => console.log('Error', err),
-                () => {
-                    console.log("The PUT observable is now completed.");
-                }
+                err => console.log('Error', err)
             );
     }
 

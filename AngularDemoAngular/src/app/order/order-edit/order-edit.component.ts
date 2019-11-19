@@ -21,56 +21,6 @@ export class OrderEditComponent implements OnInit {
     }
 
     ngOnInit() {
-
-        // this.orderForm = new FormGroup({
-        //     OrderID: new FormControl(''),
-        //     CustomerID: new FormControl(''),
-        //     EmployeeID: new FormControl(''),
-        //     OrderDate: new FormControl(''),
-        //     RequiredDate: new FormControl(''),
-        //     ShippedDate: new FormControl(''),
-        //     ShipVia: new FormControl(''),
-        //     Freight: new FormControl(''),
-        //     ShipName: new FormControl(''),
-        //     ShipAddress: new FormControl(''),
-        //     ShipCity: new FormControl(''),
-        //     ShipRegion: new FormControl(''),
-        //     ShipPostalCode: new FormControl(''),
-        //     ShipCountry: new FormControl(''),
-        //     // Detail : new FormGroup({
-        //     //     ProductID : new FormControl(''),
-        //     //     UnitPrice : new FormControl(''),
-        //     //     Quantity : new FormControl(''),
-        //     //     Discount : new FormControl(''),
-        //     // })[0]
-        // });
-
-        // this.orderForm = this.fb.group(
-        //     {
-        //         OrderID: [''],
-        //         CustomerID: ['', Validators.required],
-        //         EmployeeID: [''],
-        //         OrderDate: [''],
-        //         RequiredDate: [''],
-        //         ShippedDate: [''],
-        //         ShipVia: [''],
-        //         Freight: [''],
-        //         ShipName: [''],
-        //         ShipAddress: [''],
-        //         ShipCity: [''],
-        //         ShipRegion: [''],
-        //         ShipPostalCode: [''],
-        //         ShipCountry: [''],
-        //         Detail: this.fb.array([this.fb.group({
-        //             ProductID: [''],
-        //             UnitPrice: [''],
-        //             Quantity: [''],
-        //             Discount: [''],
-        //         })])
-        //     });
-
-// console.log(this.orderForm.value);
-
         this.route.params
             .subscribe(
                 (params: Params) => {
@@ -123,7 +73,7 @@ export class OrderEditComponent implements OnInit {
         this.orderService.updateOrder(submitData)
             .subscribe(
                 val => {
-                    this.router.navigate(['/order/' + val]);
+                    this.router.navigate(['/order/detail/' + val]);
                 },
                 response => {
                     console.log("PUT call in error", response);

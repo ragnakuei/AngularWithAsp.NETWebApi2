@@ -48,7 +48,7 @@ export class OrderService {
 	}
 
 	deleteOrder(orderId: number) {
-		return this.httpClient.delete<number>(environment.apiHost + "order/delete" + orderId, this.httpOptions)
+		return this.httpClient.delete<number>(environment.apiHost + "order/" + orderId, this.httpOptions)
 			.pipe(
 				tap(_ => this.log('delete order id:' + orderId)),
 			);

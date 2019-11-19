@@ -28,7 +28,7 @@ export class OrderListComponent implements OnInit {
 
 	onSelect(orderId: number) {
 		console.log(orderId);
-		this.router.navigate(['/order/' + orderId]);
-		// this.router.navigate(['../order', orderId], { relativeTo: this.route });
+		this.router.navigate(['/order/detail/' + orderId]);
+		// this.router.navigate(['../order/detail/', orderId], { relativeTo: this.route });
 	}
 }

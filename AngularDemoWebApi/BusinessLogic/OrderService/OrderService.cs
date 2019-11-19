@@ -165,6 +165,68 @@ where od.OrderID = @orderId
             return result;
         }
 
+        public int CreateOrder(OrderDto orderDto)
+        {
+            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            {
+                var sql = @"
+declare @maxOrderId int
+select @maxOrderId = max(od.OrderID) + 1
+from dbo.Orders od
+
+INSERT into dbo.Orders(CustomerID,
+                       EmployeeID,
+                       OrderDate,
+                       RequiredDate,
+                       ShippedDate,
+                       ShipVia,
+                       Freight,
+                       ShipName,
+                       ShipAddress,
+                       ShipCity,
+                       ShipRegion,
+                       ShipPostalCode,
+                       ShipCountry)
+values (@CustomerID,
+        @EmployeeID,
+        @OrderDate,
+        @RequiredDate,
+        @ShippedDate,
+        @ShipVia,
+        @Freight,
+        @ShipName,
+        @ShipAddress,
+        @ShipCity,
+        @ShipRegion,
+        @ShipPostalCode,
+        @ShipCountry)
+
+insert into dbo.[Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount)
+select @maxOrderId, ProductID, UnitPrice, Quantity, Discount
+from @OrderDetails
+
+select @maxOrderId
+";
+                var dynamicParemeter = new DynamicParameters();
+                dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size : 5);
+                dynamicParemeter.Add("EmployeeID", orderDto.EmployeeID, DbType.Int32);
+                dynamicParemeter.Add("OrderDate", orderDto.OrderDate, DbType.Date);
+                dynamicParemeter.Add("RequiredDate", orderDto.RequiredDate, DbType.Date);
+                dynamicParemeter.Add("ShippedDate", orderDto.ShippedDate, DbType.Date);
+                dynamicParemeter.Add("ShipVia", orderDto.ShipVia, DbType.Int32);
+                dynamicParemeter.Add("Freight", orderDto.Freight, DbType.Decimal);
+                dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size : 40);
+                dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size : 60);
+                dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size : 15);
+                dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size : 15);
+                dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size : 10);
+                dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size : 15);
+                dynamicParemeter.Add("OrderDetails", GenerateOrderDetailsDataTable(orderDto.Details).AsTableValuedParameter("dbo.ut_OrderDetail"));
+
+                return connection.Query<int>(sql, dynamicParemeter).FirstOrDefault();
+            }
+        }
+
         public void UpdateOrder(int orderId, OrderDto orderDto)
         {
             using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
@@ -255,70 +317,16 @@ from @OrderDetails
             return result;
         }
 
-        public int CreateOrder(OrderDto orderDto)
-        {
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
-            {
-                var sql = @"
-declare @maxOrderId int
-select @maxOrderId = max(od.OrderID) + 1
-from dbo.Orders od
-
-INSERT into dbo.Orders(CustomerID,
-                       EmployeeID,
-                       OrderDate,
-                       RequiredDate,
-                       ShippedDate,
-                       ShipVia,
-                       Freight,
-                       ShipName,
-                       ShipAddress,
-                       ShipCity,
-                       ShipRegion,
-                       ShipPostalCode,
-                       ShipCountry)
-values (@CustomerID,
-        @EmployeeID,
-        @OrderDate,
-        @RequiredDate,
-        @ShippedDate,
-        @ShipVia,
-        @Freight,
-        @ShipName,
-        @ShipAddress,
-        @ShipCity,
-        @ShipRegion,
-        @ShipPostalCode,
-        @ShipCountry)
-
-select @maxOrderId
-";
-                var dynamicParemeter = new DynamicParameters();
-                dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size : 5);
-                dynamicParemeter.Add("EmployeeID", orderDto.EmployeeID, DbType.Int32);
-                dynamicParemeter.Add("OrderDate", orderDto.OrderDate, DbType.Date);
-                dynamicParemeter.Add("RequiredDate", orderDto.RequiredDate, DbType.Date);
-                dynamicParemeter.Add("ShippedDate", orderDto.ShippedDate, DbType.Date);
-                dynamicParemeter.Add("ShipVia", orderDto.ShipVia, DbType.Int32);
-                dynamicParemeter.Add("Freight", orderDto.Freight, DbType.Decimal);
-                dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size : 40);
-                dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size : 60);
-                dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size : 15);
-                dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size : 15);
-                dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size : 10);
-                dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size : 15);
-
-                return connection.Query<int>(sql, dynamicParemeter).FirstOrDefault();
-            }
-        }
-
         public void DeleteOrder(int orderId)
         {
             using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
             {
                 var sql = @"
-delete dbo.Orders
-where OrderId = @orderId
+DELETE dbo.[Order Details]
+WHERE OrderId = @orderId
+
+DELETE dbo.Orders
+WHERE OrderId = @orderId
 ";
                 var dynamicParemeter = new DynamicParameters();
                 dynamicParemeter.Add("OrderId", orderId, DbType.Int32);
