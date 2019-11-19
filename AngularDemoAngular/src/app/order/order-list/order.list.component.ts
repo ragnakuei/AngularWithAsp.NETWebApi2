@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { OrderService } from '../order.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OrderList } from 'src/app/models/OrderList';
-import { Router, ActivatedRoute } from '@angular/router';
+import { OrderService } from '../order.service';
 
 @Component({
 	templateUrl: './order.list.component.html',
@@ -19,10 +19,11 @@ export class OrderListComponent implements OnInit {
 		this.orderService.getList()
 			.subscribe(
 				resp => {
-					for (var orderList of resp.body) {
+					for (var orderList of resp) {
 						this.list.push(orderList);
 					}
-				});
+				},
+				err => console.log('Error', err));
 	}
 
 	onSelect(orderId: number) {

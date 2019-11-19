@@ -33,6 +33,6 @@ namespace SharedLibrary.Dto
 
         public string ShipCountry { get; set; }
         
-        public IEnumerable<OrderDetailDto> Detail { get; set; }
+        public IEnumerable<OrderDetailDto> Details { get; set; }
     }
 }

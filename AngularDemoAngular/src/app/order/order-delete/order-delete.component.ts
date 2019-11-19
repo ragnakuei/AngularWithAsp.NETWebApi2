@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../order.service';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { tap, catchError } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
 
 @Component({
     selector: 'app-order-delete',
@@ -20,7 +18,6 @@ export class OrderDeleteComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-
             .subscribe(
                 (params: Params) => {
                     this.id = params['id'];
@@ -34,9 +31,7 @@ export class OrderDeleteComponent implements OnInit {
                 val => {
                     this.router.navigate(['/order/']);
                 },
-                response => {
-                    console.log("Delete call in error", response);
-                }
+                err => console.log('Error', err)
             );
     }
 }

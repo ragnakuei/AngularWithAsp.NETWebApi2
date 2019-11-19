@@ -14,5 +14,5 @@ export class Order {
     ShipRegion: null;
     ShipPostalCode: string;
     ShipCountry: string;
-    Detail: OrderDetail[];
+    Details: OrderDetail[];
 }

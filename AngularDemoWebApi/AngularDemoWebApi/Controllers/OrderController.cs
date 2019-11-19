@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Threading.Tasks;
+using System.Web.Http;
 using BusinessLogic.OrderService;
 using SharedLibrary.Dto;
 
@@ -15,6 +16,11 @@ namespace AngularDemoWebApi.Controllers
         }
 
         [HttpGet, Route("list")]
+//        public async Task<IHttpActionResult> List()
+//        {
+//            var result = await _orderService.GetOrderListAsync();
+//            return Ok(result);
+//        }
         public IHttpActionResult List()
         {
             var result = _orderService.GetOrderList();

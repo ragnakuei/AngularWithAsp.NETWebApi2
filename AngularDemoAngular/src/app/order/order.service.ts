@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { catchError, tap, map } from 'rxjs/operators';
 import { OrderList } from '../models/OrderList';
 import { Order } from '../models/Order';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 @Injectable()
 export class OrderService {
@@ -17,11 +17,11 @@ export class OrderService {
 
 	constructor(private httpClient: HttpClient) { }
 
-	getList() {
+	getList() : Observable<OrderList[]>  {
 		return this.httpClient.get<OrderList[]>(environment.apiHost + "order/list", { observe: 'response' })
 			.pipe(
+				map(resp => resp.body),
 				tap(_ => this.log('get order list')),
-				catchError( error => this.handleError<OrderList[]>('get order list'))
 			);
 	}
 
@@ -30,7 +30,6 @@ export class OrderService {
 			.pipe(
 				map(resp => resp.body),
 				tap(_ => this.log('get order id:' + orderId)),
-				catchError(error => this.handleError<Order>('get order'))
 			);
 	}
 
@@ -38,7 +37,6 @@ export class OrderService {
 		return this.httpClient.post<number>(environment.apiHost + "order/create", order, this.httpOptions)
 			.pipe(
 				tap(_ => this.log('create order')),
-				catchError(error => this.handleError<number>('create order'))
 			);
 	}
 
@@ -46,7 +44,6 @@ export class OrderService {
 		return this.httpClient.put<number>(environment.apiHost + "order/" + order.OrderID, order, this.httpOptions)
 			.pipe(
 				tap(_ => this.log('update order id:' + order.OrderID)),
-				catchError(error => this.handleError<number>('update order', + order.OrderID))
 			);
 	}
 
@@ -54,16 +51,7 @@ export class OrderService {
 		return this.httpClient.delete<number>(environment.apiHost + "order/delete" + orderId, this.httpOptions)
 			.pipe(
 				tap(_ => this.log('delete order id:' + orderId)),
-				catchError(this.handleError<number>('delete order', orderId))
 			);
-	}
-
-	private handleError<T>(operation = 'operation', result?: T) {
-		return (error: any): Observable<T> => {
-
-			this.log(`${operation} failed: ${error.message}`);
-			return of(result as T);
-		};
 	}
 
 	private log(message: string) {

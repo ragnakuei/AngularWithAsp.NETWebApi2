@@ -1,6 +1,9 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using BusinessLogic.Configuration;
 using Dapper;
 using SharedLibrary.Dto;
@@ -65,6 +68,52 @@ from dbo.[Order Details] od
             return result;
         }
 
+        public async Task<OrderListDto[]> GetOrderListAsync()
+        {
+            var orders = Enumerable.Empty<Order>();
+            var orderDetails = Enumerable.Empty<int>();
+
+            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            {
+                var sql = @"
+select *
+from dbo.Orders
+
+select od.OrderID
+from dbo.[Order Details] od
+";
+                var gridReader = await connection.QueryMultipleAsync(sql);
+
+                orders = gridReader.Read<Order>();
+                orderDetails = gridReader.Read<int>();
+            }
+
+            var orderDetailCount = orderDetails.GroupBy(od => od)
+                                               .ToDictionary(od => od.Key, od => od.Count());
+            var result = orders.Select(o =>
+                                       {
+                                           return new OrderListDto
+                                                  {
+                                                      OrderID = o.OrderID,
+                                                      CustomerID = o.CustomerID,
+                                                      EmployeeID = o.EmployeeID,
+                                                      OrderDate = o.OrderDate,
+                                                      RequiredDate = o.RequiredDate,
+                                                      ShippedDate = o.ShippedDate,
+                                                      ShipVia = o.ShipVia,
+                                                      Freight = o.Freight,
+                                                      ShipName = o.ShipName,
+                                                      ShipAddress = o.ShipAddress,
+                                                      ShipCity = o.ShipCity,
+                                                      ShipRegion = o.ShipRegion,
+                                                      ShipPostalCode = o.ShipPostalCode,
+                                                      ShipCountry = o.ShipCountry,
+                                                      DetailCount = orderDetailCount.GetValue(o.OrderID)
+                                                  };
+                                       }).ToArray();
+            return result;
+        }
+
         public OrderDto GetOrder(int orderId)
         {
             Order order = null;
@@ -105,7 +154,7 @@ where od.OrderID = @orderId
                              ShipRegion = order.ShipRegion,
                              ShipPostalCode = order.ShipPostalCode,
                              ShipCountry = order.ShipCountry,
-                             Detail = orderDetails.Select(od => new OrderDetailDto
+                             Details = orderDetails.Select(od => new OrderDetailDto
                                                                 {
                                                                     ProductID = od.ProductID,
                                                                     UnitPrice = od.UnitPrice,
@@ -136,6 +185,13 @@ set CustomerID = @CustomerID,
     ShipPostalCode = @ShipPostalCode,
     ShipCountry = @ShipCountry
 where OrderID = @OrderID
+
+delete from dbo.[Order Details]
+where OrderID = @OrderID 
+
+insert into dbo.[Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount)
+select @OrderId, ProductID, UnitPrice, Quantity, Discount
+from @OrderDetails
 ";
                 var dynamicParemeter = new DynamicParameters();
                 dynamicParemeter.Add("OrderId", orderDto.OrderID, DbType.Int32);
@@ -152,9 +208,51 @@ where OrderID = @OrderID
                 dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size : 15);
                 dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size : 10);
                 dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size : 15);
+                dynamicParemeter.Add("OrderDetails", GenerateOrderDetailsDataTable(orderDto.Details).AsTableValuedParameter("dbo.ut_OrderDetail"));
 
                 connection.Execute(sql, dynamicParemeter);
             }
+        }
+
+        private static DataTable GenerateOrderDetailsDataTable(IEnumerable<OrderDetailDto> orderDtoDetails)
+        {
+            var result = new DataTable();
+            
+            var column = new DataColumn();
+            column.ColumnName = "ProductID";
+            column.AllowDBNull = false;
+            column.DataType = typeof(int);
+            result.Columns.Add(column);
+            
+            column = new DataColumn();
+            column.ColumnName = "UnitPrice";
+            column.AllowDBNull = false;
+            column.DataType = typeof(decimal);
+            result.Columns.Add(column);
+            
+            column = new DataColumn();
+            column.ColumnName = "Quantity";
+            column.AllowDBNull = false;
+            column.DataType = typeof(short);
+            result.Columns.Add(column);
+            
+            column = new DataColumn();
+            column.ColumnName = "Discount";
+            column.AllowDBNull = false;
+            column.DataType = typeof(float);
+            result.Columns.Add(column);
+
+            foreach (var detail in orderDtoDetails)
+            {
+                var row = result.NewRow();
+                row[0] = detail.ProductID;
+                row[1] = detail.UnitPrice;
+                row[2] = detail.Quantity;
+                row[3] = detail.Discount;
+                result.Rows.Add(row);
+            }
+
+            return result;
         }
 
         public int CreateOrder(OrderDto orderDto)

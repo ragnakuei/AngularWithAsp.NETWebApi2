@@ -48,9 +48,7 @@ export class OrderCreateComponent implements OnInit {
                 val => {
                     this.router.navigate(['/order/' + val]);
                 },
-                response => {
-                    console.log("PUT call in error", response);
-                },
+                err => console.log('Error', err),
                 () => {
                     console.log("The PUT observable is now completed.");
                 }
