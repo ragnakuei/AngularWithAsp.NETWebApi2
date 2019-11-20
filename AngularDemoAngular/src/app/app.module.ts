@@ -16,6 +16,7 @@ import { MatButtonModule } from "@angular/material";
 import { MatListModule } from "@angular/material/list";
 import { MatInputModule } from "@angular/material/input";
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 // Service
 import { OrderService } from "./order/order.service";
@@ -65,6 +66,7 @@ import { AppSidenavComponent } from './app-sidenav/app-sidenav.component';
     MatListModule,
     MatInputModule,
     MatTableModule,
+    MatPaginatorModule,
   ],
   providers: [OrderService, SidenavService],
   bootstrap: [AppComponent]

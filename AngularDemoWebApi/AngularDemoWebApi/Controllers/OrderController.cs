@@ -16,14 +16,9 @@ namespace AngularDemoWebApi.Controllers
         }
 
         [HttpGet, Route("list")]
-//        public async Task<IHttpActionResult> List()
-//        {
-//            var result = await _orderService.GetOrderListAsync();
-//            return Ok(result);
-//        }
-        public IHttpActionResult List()
+        public IHttpActionResult List(int pageIndex = 1, int pageSize = 10)
         {
-            var result = _orderService.GetOrderList();
+            var result = _orderService.GetOrderList(pageIndex, pageSize);
             return Ok(result);
         }
 

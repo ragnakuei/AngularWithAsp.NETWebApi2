@@ -4,6 +4,12 @@ namespace SharedLibrary.Dto
 {
     public class OrderListDto
     {
+        public int TotalCount { get; set; }
+        public OrderListItemDto[] Items { get; set; }
+    }
+    
+    public class OrderListItemDto
+    {
         public int OrderID { get; set; }
 
         public string CustomerID { get; set; }

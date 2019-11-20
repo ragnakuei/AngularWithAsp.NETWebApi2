@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
 using BusinessLogic.Configuration;
 using Dapper;
 using SharedLibrary.Dto;
@@ -21,96 +20,80 @@ namespace BusinessLogic.OrderService
             _configurationService = configurationService;
         }
 
-        public OrderListDto[] GetOrderList()
+        public OrderListDto GetOrderList(int pageIndex, int pageSize)
         {
             var orders = Enumerable.Empty<Order>();
             var orderDetails = Enumerable.Empty<int>();
+            var totalCount = 0;
 
             using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
             {
                 var sql = @"
-select *
-from dbo.Orders
+DECLARE @OrderIds table
+                  (
+                      OrderID int
+                  )
 
-select od.OrderID
-from dbo.[Order Details] od
+INSERT INTO @OrderIds(OrderID)
+SELECT OrderID
+FROM dbo.Orders
+ORDER BY OrderID
+    OFFSET @skipCount ROWS
+FETCH NEXT @pageSize ROWS ONLY;
+
+SELECT *
+FROM dbo.Orders o
+    JOIN @OrderIds oIds
+         ON oIds.OrderID = o.OrderID
+
+SELECT od.OrderID
+FROM dbo.[Order Details] od
+    JOIN @OrderIds oIds
+         ON oIds.OrderID = od.OrderID
+
+SELECT count(0)
+FROM dbo.orders
 ";
-                var gridReader = connection.QueryMultiple(sql);
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("skipCount", (pageIndex - 1) * pageSize, DbType.Int32);
+                dynamicParameters.Add("pageSize", pageSize, DbType.Int32);
+
+                var gridReader = connection.QueryMultiple(sql, dynamicParameters);
 
                 orders = gridReader.Read<Order>();
                 orderDetails = gridReader.Read<int>();
+                totalCount = gridReader.Read<int>().FirstOrDefault();
             }
 
             var orderDetailCount = orderDetails.GroupBy(od => od)
                                                .ToDictionary(od => od.Key, od => od.Count());
 
-            var result = orders.Select(o =>
-                                       {
-                                           return new OrderListDto
-                                                  {
-                                                      OrderID = o.OrderID,
-                                                      CustomerID = o.CustomerID,
-                                                      EmployeeID = o.EmployeeID,
-                                                      OrderDate = o.OrderDate,
-                                                      RequiredDate = o.RequiredDate,
-                                                      ShippedDate = o.ShippedDate,
-                                                      ShipVia = o.ShipVia,
-                                                      Freight = o.Freight,
-                                                      ShipName = o.ShipName,
-                                                      ShipAddress = o.ShipAddress,
-                                                      ShipCity = o.ShipCity,
-                                                      ShipRegion = o.ShipRegion,
-                                                      ShipPostalCode = o.ShipPostalCode,
-                                                      ShipCountry = o.ShipCountry,
-                                                      DetailCount = orderDetailCount.GetValue(o.OrderID)
-                                                  };
-                                       }).ToArray();
-            return result;
-        }
+            var result = new OrderListDto
+                         {
+                             TotalCount = totalCount,
+                             Items = orders.Select(o =>
+                                                   {
+                                                       return new OrderListItemDto
+                                                              {
+                                                                  OrderID = o.OrderID,
+                                                                  CustomerID = o.CustomerID,
+                                                                  EmployeeID = o.EmployeeID,
+                                                                  OrderDate = o.OrderDate,
+                                                                  RequiredDate = o.RequiredDate,
+                                                                  ShippedDate = o.ShippedDate,
+                                                                  ShipVia = o.ShipVia,
+                                                                  Freight = o.Freight,
+                                                                  ShipName = o.ShipName,
+                                                                  ShipAddress = o.ShipAddress,
+                                                                  ShipCity = o.ShipCity,
+                                                                  ShipRegion = o.ShipRegion,
+                                                                  ShipPostalCode = o.ShipPostalCode,
+                                                                  ShipCountry = o.ShipCountry,
+                                                                  DetailCount = orderDetailCount.GetValue(o.OrderID)
+                                                              };
+                                                   }).ToArray()
+                         };
 
-        public async Task<OrderListDto[]> GetOrderListAsync()
-        {
-            var orders = Enumerable.Empty<Order>();
-            var orderDetails = Enumerable.Empty<int>();
-
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
-            {
-                var sql = @"
-select *
-from dbo.Orders
-
-select od.OrderID
-from dbo.[Order Details] od
-";
-                var gridReader = await connection.QueryMultipleAsync(sql);
-
-                orders = gridReader.Read<Order>();
-                orderDetails = gridReader.Read<int>();
-            }
-
-            var orderDetailCount = orderDetails.GroupBy(od => od)
-                                               .ToDictionary(od => od.Key, od => od.Count());
-            var result = orders.Select(o =>
-                                       {
-                                           return new OrderListDto
-                                                  {
-                                                      OrderID = o.OrderID,
-                                                      CustomerID = o.CustomerID,
-                                                      EmployeeID = o.EmployeeID,
-                                                      OrderDate = o.OrderDate,
-                                                      RequiredDate = o.RequiredDate,
-                                                      ShippedDate = o.ShippedDate,
-                                                      ShipVia = o.ShipVia,
-                                                      Freight = o.Freight,
-                                                      ShipName = o.ShipName,
-                                                      ShipAddress = o.ShipAddress,
-                                                      ShipCity = o.ShipCity,
-                                                      ShipRegion = o.ShipRegion,
-                                                      ShipPostalCode = o.ShipPostalCode,
-                                                      ShipCountry = o.ShipCountry,
-                                                      DetailCount = orderDetailCount.GetValue(o.OrderID)
-                                                  };
-                                       }).ToArray();
             return result;
         }
 
@@ -155,12 +138,12 @@ where od.OrderID = @orderId
                              ShipPostalCode = order.ShipPostalCode,
                              ShipCountry = order.ShipCountry,
                              Details = orderDetails.Select(od => new OrderDetailDto
-                                                                {
-                                                                    ProductID = od.ProductID,
-                                                                    UnitPrice = od.UnitPrice,
-                                                                    Quantity = od.Quantity,
-                                                                    Discount = od.Discount,
-                                                                }).ToArray(),
+                                                                 {
+                                                                     ProductID = od.ProductID,
+                                                                     UnitPrice = od.UnitPrice,
+                                                                     Quantity = od.Quantity,
+                                                                     Discount = od.Discount,
+                                                                 }).ToArray(),
                          };
             return result;
         }
@@ -279,25 +262,25 @@ from @OrderDetails
         private static DataTable GenerateOrderDetailsDataTable(IEnumerable<OrderDetailDto> orderDtoDetails)
         {
             var result = new DataTable();
-            
+
             var column = new DataColumn();
             column.ColumnName = "ProductID";
             column.AllowDBNull = false;
             column.DataType = typeof(int);
             result.Columns.Add(column);
-            
+
             column = new DataColumn();
             column.ColumnName = "UnitPrice";
             column.AllowDBNull = false;
             column.DataType = typeof(decimal);
             result.Columns.Add(column);
-            
+
             column = new DataColumn();
             column.ColumnName = "Quantity";
             column.AllowDBNull = false;
             column.DataType = typeof(short);
             result.Columns.Add(column);
-            
+
             column = new DataColumn();
             column.ColumnName = "Discount";
             column.AllowDBNull = false;

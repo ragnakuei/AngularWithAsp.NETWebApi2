@@ -1,5 +1,10 @@
 
 export class OrderList {
+    TotalCount : number;
+    Items : OrderListItem[];
+}
+
+export class OrderListItem {
     OrderID: number;
     CustomerID: string;
     EmployeeID: number;

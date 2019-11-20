@@ -1,19 +1,21 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { OrderList } from "src/app/models/OrderList";
+import { OrderList, OrderListItem } from "src/app/models/OrderList";
 import { OrderService } from "../order.service";
 import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 
 @Component({
   templateUrl: "./order.list.component.html",
-  styles: [`
-  table {
-	width: 100%;
-  }
-  `]
+  styles: [
+    `
+      table {
+        width: 100%;
+      }
+    `
+  ]
 })
 export class OrderListComponent implements OnInit {
-  orderListDataSource = new MatTableDataSource<OrderList>();
   displayedColumns: string[] = [
     "OrderID",
     "CustomerID",
@@ -29,8 +31,16 @@ export class OrderListComponent implements OnInit {
     "ShipRegion",
     "ShipPostalCode",
     "ShipCountry",
-    "DetailCount"
+    "DetailCount",
+    "Management"
   ];
+
+  orderListDataSource = new MatTableDataSource<OrderListItem>();
+
+  @ViewChild(MatPaginator, { static: true })
+  paginator: MatPaginator;
+  
+  totalCount : number;
 
   list: OrderList[] = [];
 
@@ -41,12 +51,21 @@ export class OrderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.orderService.getList().subscribe(
+	this.getOrderList(1, 10);
+	
+	this.paginator.page.subscribe((page: PageEvent) => {
+		this.getOrderList(page.pageIndex, page.pageSize);
+	  });
+  }
+
+  private getOrderList(pageIndex: number, pageSize: number) {
+
+	// pageIndex += 1;
+
+    this.orderService.getList(pageIndex, pageSize).subscribe(
       resp => {
-        // for (var orderList of resp) {
-        // 	this.list.push(orderList);
-        // }
-        this.orderListDataSource.data = resp;
+		this.orderListDataSource.data = resp.Items;
+		this.totalCount = resp.TotalCount;
       },
       err => console.log("Error", err)
     );
@@ -54,7 +73,5 @@ export class OrderListComponent implements OnInit {
 
   onSelect(orderId: number) {
     console.log(orderId);
-    this.router.navigate(["/order/detail/" + orderId]);
-    // this.router.navigate(['../order/detail/', orderId], { relativeTo: this.route });
   }
 }
