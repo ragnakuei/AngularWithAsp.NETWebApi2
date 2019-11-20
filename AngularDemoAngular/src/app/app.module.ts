@@ -15,6 +15,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material";
 import { MatListModule } from "@angular/material/list";
 import { MatInputModule } from "@angular/material/input";
+import { MatTableModule } from '@angular/material/table';
 
 // Service
 import { OrderService } from "./order/order.service";
@@ -25,7 +26,6 @@ import { HomeComponent } from "./home/home.component";
 import { OrderComponent } from "./order/order.component";
 import { OrderListComponent } from "./order/order-list/order.list.component";
 import { OrderDetailComponent } from "./order/order-detail/order-detail.component";
-import { OrderItemComponent } from "./order/order-list/order-item/order-item.component";
 import { OrderEditComponent } from "./order/order-edit/order-edit.component";
 import { OrderCreateComponent } from "./order/order-create/order-create.component";
 import { OrderDeleteComponent } from "./order/order-delete/order-delete.component";
@@ -41,7 +41,6 @@ import { AppSidenavComponent } from './app-sidenav/app-sidenav.component';
     OrderComponent,
     OrderListComponent,
     OrderDetailComponent,
-    OrderItemComponent,
     OrderEditComponent,
     OrderCreateComponent,
     OrderDeleteComponent,
@@ -65,6 +64,7 @@ import { AppSidenavComponent } from './app-sidenav/app-sidenav.component';
     MatButtonModule,
     MatListModule,
     MatInputModule,
+    MatTableModule,
   ],
   providers: [OrderService, SidenavService],
   bootstrap: [AppComponent]
