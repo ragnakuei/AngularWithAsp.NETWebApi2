@@ -1,20 +1,29 @@
 <mat-sidenav-container>
   <mat-sidenav #sideNav mode="push">
-    <mat-list>
-      <mat-list-item
-        routerLink=""
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        (click)="sideNav.toggle()"
-        >Home</mat-list-item
-      >
-      <mat-list-item
-        routerLink="order"
-        routerLinkActive="active"
-        (click)="sideNav.toggle()"
-        >Orders</mat-list-item
-      >
-    </mat-list>
+    <mat-nav-list>
+      <mat-list-item>
+        <a
+          matLine
+          routerLink=""
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="sideNav.close()"
+          >Home</a
+        >
+      </mat-list-item>
+      <mat-list-item>
+        <a
+          matLine
+          routerLink="order"
+          routerLinkActive="active"
+          (click)="sideNav.close()"
+          >Orders</a
+        >
+        <!-- <button mat-icon-button>
+        <mat-icon>info</mat-icon>
+      </button> -->
+      </mat-list-item>
+    </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
     <ng-content></ng-content>
