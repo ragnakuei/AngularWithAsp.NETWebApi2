@@ -39,8 +39,8 @@ export class OrderListComponent implements OnInit {
 
   @ViewChild(MatPaginator, { static: true })
   paginator: MatPaginator;
-  
-  totalCount : number;
+
+  totalCount: number;
 
   list: OrderList[] = [];
 
@@ -51,21 +51,18 @@ export class OrderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-	this.getOrderList(1, 10);
-	
-	this.paginator.page.subscribe((page: PageEvent) => {
-		this.getOrderList(page.pageIndex, page.pageSize);
-	  });
+    this.getOrderList(1, 10);
+
+    this.paginator.page.subscribe((page: PageEvent) => {
+      this.getOrderList(page.pageIndex, page.pageSize);
+    });
   }
 
   private getOrderList(pageIndex: number, pageSize: number) {
-
-	// pageIndex += 1;
-
     this.orderService.getList(pageIndex, pageSize).subscribe(
       resp => {
-		this.orderListDataSource.data = resp.Items;
-		this.totalCount = resp.TotalCount;
+        this.orderListDataSource.data = resp.Items;
+        this.totalCount = resp.TotalCount;
       },
       err => console.log("Error", err)
     );

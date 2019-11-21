@@ -16,7 +16,7 @@ namespace AngularDemoWebApi.Controllers
         }
 
         [HttpGet, Route("list")]
-        public IHttpActionResult List(int pageIndex = 1, int pageSize = 10)
+        public IHttpActionResult List(int pageIndex = 0, int pageSize = 10)
         {
             var result = _orderService.GetOrderList(pageIndex, pageSize);
             return Ok(result);

@@ -55,7 +55,7 @@ SELECT count(0)
 FROM dbo.orders
 ";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("skipCount", (pageIndex - 1) * pageSize, DbType.Int32);
+                dynamicParameters.Add("skipCount", pageIndex * pageSize, DbType.Int32);
                 dynamicParameters.Add("pageSize", pageSize, DbType.Int32);
 
                 var gridReader = connection.QueryMultiple(sql, dynamicParameters);

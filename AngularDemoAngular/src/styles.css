@@ -2,5 +2,21 @@
 
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mat-h1 {
+  padding-left: 24px;
+  padding-top: 24px;
+}
+
+.mat-h2 {
+  padding-left: 24px;
+}
