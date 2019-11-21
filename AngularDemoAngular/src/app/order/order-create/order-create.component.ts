@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray } from '@angular/forms';
+import { Location } from '@angular/common';
 import { OrderService } from '../order.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Order } from 'src/app/models/Order';
@@ -14,6 +15,7 @@ export class OrderCreateComponent implements OnInit {
     orderForm: FormGroup;
 
     constructor(private orderService: OrderService,
+        private location: Location,
         private route: ActivatedRoute,
         private router: Router) {
     }
@@ -51,10 +53,13 @@ export class OrderCreateComponent implements OnInit {
         this.orderService.createOrder(submitData)
             .subscribe(
                 val => {
-                    this.router.navigate(['/order/detail/' + val]);
+                    this.router.navigate(['/order/edit/' + val]);
                 },
                 err => console.log('Error', err)
             );
     }
-
+    backToPreviousPage()
+    {
+        this.location.back();
+    }
 }

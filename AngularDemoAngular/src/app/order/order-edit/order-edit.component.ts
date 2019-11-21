@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { OrderService } from '../order.service';
 import { ActivatedRoute, Router, Params } from '@angular/router';
@@ -17,6 +18,7 @@ export class OrderEditComponent implements OnInit {
     constructor(private orderService: OrderService,
         private route: ActivatedRoute,
         private router: Router,
+        private location: Location,
         private formBuilder: FormBuilder) {
     }
 
@@ -30,7 +32,10 @@ export class OrderEditComponent implements OnInit {
                             responseOrder => {
                                 this.orderForm = this.formBuilder.group(
                                     {
-                                        OrderID: [responseOrder.OrderID],
+                                        OrderID: [{
+                                            value: responseOrder.OrderID,
+                                            disabled : true
+                                        }],
                                         CustomerID: [responseOrder.CustomerID, Validators.required],
                                         EmployeeID: [responseOrder.EmployeeID],
                                         OrderDate: [responseOrder.OrderDate],
@@ -79,5 +84,10 @@ export class OrderEditComponent implements OnInit {
                     console.log("PUT call in error", response);
                 }
             );
+    }
+
+    backToPreviousPage()
+    {
+        this.location.back();
     }
 }

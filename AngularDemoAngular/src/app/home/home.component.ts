@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  template: 'Home',
+  template: '<h1 class="mat-h1">Home</h1>',
   styles: []
 })
 
