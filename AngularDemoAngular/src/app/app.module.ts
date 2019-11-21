@@ -29,6 +29,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatCardModule } from "@angular/material/card";
+import { MatBadgeModule } from "@angular/material/badge";
 
 // Component
 import { HomeComponent } from "./home/home.component";
@@ -75,7 +76,8 @@ import { TW_FORMATS } from "./datepicker-formats/TW_FORMATS";
     MatPaginatorModule,
     MatDatepickerModule,
     MatExpansionModule,
-    MatCardModule
+    MatCardModule,
+    MatBadgeModule
   ],
   providers: [
     OrderService,
