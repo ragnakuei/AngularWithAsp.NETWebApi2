@@ -9,7 +9,7 @@ using SharedLibrary.Dto;
 using SharedLibrary.Entity;
 using SharedLibrary.Helper;
 
-namespace BusinessLogic.OrderService
+namespace BusinessLogic.Order
 {
     public class OrderService : IOrderService
     {
@@ -22,7 +22,7 @@ namespace BusinessLogic.OrderService
 
         public OrderListDto GetOrderList(int pageIndex, int pageSize)
         {
-            var orders = Enumerable.Empty<Order>();
+            var orders = Enumerable.Empty<SharedLibrary.Entity.Order>();
             var orderDetails = Enumerable.Empty<int>();
             var totalCount = 0;
 
@@ -60,7 +60,7 @@ FROM dbo.orders
 
                 var gridReader = connection.QueryMultiple(sql, dynamicParameters);
 
-                orders = gridReader.Read<Order>();
+                orders = gridReader.Read<SharedLibrary.Entity.Order>();
                 orderDetails = gridReader.Read<int>();
                 totalCount = gridReader.Read<int>().FirstOrDefault();
             }
@@ -99,7 +99,7 @@ FROM dbo.orders
 
         public OrderDto GetOrder(int orderId)
         {
-            Order order = null;
+            SharedLibrary.Entity.Order order = null;
             var orderDetails = Enumerable.Empty<OrderDetail>();
 
             using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
@@ -117,7 +117,7 @@ where od.OrderID = @orderId
                 dynamicParemeter.Add("orderId", orderId, DbType.Int32);
                 var gridReader = connection.QueryMultiple(sql, dynamicParemeter);
 
-                order = gridReader.Read<Order>().FirstOrDefault();
+                order = gridReader.Read<SharedLibrary.Entity.Order>().FirstOrDefault();
                 orderDetails = gridReader.Read<OrderDetail>();
             }
 

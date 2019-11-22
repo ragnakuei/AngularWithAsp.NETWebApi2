@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
-using BusinessLogic.OrderService;
+using BusinessLogic.Order;
 using SharedLibrary.Dto;
 
 namespace AngularDemoWebApi.Controllers

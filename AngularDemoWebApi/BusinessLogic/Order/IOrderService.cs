@@ -1,6 +1,6 @@
 ﻿using SharedLibrary.Dto;
 
-namespace BusinessLogic.OrderService
+namespace BusinessLogic.Order
 {
     public interface IOrderService
     {

@@ -48,8 +48,10 @@
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationService.cs" />
     <Compile Include="Configuration\IConfigurationService.cs" />
-    <Compile Include="OrderService\IOrderService.cs" />
-    <Compile Include="OrderService\OrderService.cs" />
+    <Compile Include="Options\IOptionsService.cs" />
+    <Compile Include="Options\OptionsService.cs" />
+    <Compile Include="Order\IOrderService.cs" />
+    <Compile Include="Order\OrderService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

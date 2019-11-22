@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 // Service
 import { OrderService } from "./order/order.service";
 import { SidenavService } from "./sidenav.service";
+import { OptionsService } from "./options.service";
 
 // Angular Material
 import {
@@ -31,6 +32,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatCardModule } from "@angular/material/card";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 // Component
 import { HomeComponent } from "./home/home.component";
@@ -43,7 +45,7 @@ import { AppHeaderComponent } from "./app-header/app-header.component";
 import { AppFooterComponent } from "./app-footer/app-footer.component";
 import { AppSidenavComponent } from "./app-sidenav/app-sidenav.component";
 import { TW_FORMATS } from "./datepicker-formats/TW_FORMATS";
-import { OrderConfirmDeleteDialogComponent } from './order/order-confirm-delete-dialog/order-confirm-delete-dialog.component';
+import { OrderConfirmDeleteDialogComponent } from "./order/order-confirm-delete-dialog/order-confirm-delete-dialog.component";
 
 @NgModule({
   declarations: [
@@ -81,13 +83,13 @@ import { OrderConfirmDeleteDialogComponent } from './order/order-confirm-delete-
     MatExpansionModule,
     MatCardModule,
     MatBadgeModule,
-    MatDialogModule
+    MatDialogModule,
+    MatAutocompleteModule,
   ],
-  entryComponents: [
-    OrderConfirmDeleteDialogComponent
-  ],
+  entryComponents: [OrderConfirmDeleteDialogComponent],
   providers: [
     OrderService,
+    OptionsService,
     SidenavService,
     { provide: MAT_DATE_LOCALE, useValue: "zh-TW" },
     { provide: MAT_DATE_FORMATS, useValue: TW_FORMATS }

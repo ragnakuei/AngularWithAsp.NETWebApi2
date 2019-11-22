@@ -15,8 +15,18 @@
               matInput
               formControlName="CustomerID"
               placeholder="CustomerID"
+              [matAutocomplete]="customerAutoComplete"
             />
           </mat-form-field>
+
+          <mat-autocomplete #customerAutoComplete="matAutocomplete">
+            <mat-option
+              *ngFor="let customerOption of customerOptions"
+              [value]="customerOption.CompanyName"
+            >
+              <span innerHTML="{{highlightFiltered(customerOption.CompanyName)}}"></span>
+            </mat-option>
+          </mat-autocomplete>
         </p>
         <p>
           <mat-form-field>

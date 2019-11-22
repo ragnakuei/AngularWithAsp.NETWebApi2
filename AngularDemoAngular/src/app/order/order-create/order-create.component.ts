@@ -4,6 +4,10 @@ import { Location } from "@angular/common";
 import { OrderService } from "../order.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Order } from "src/app/models/Order";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { debounceTime, tap } from "rxjs/operators";
+import { OptionsService } from "src/app/options.service";
+import { CustomerOption } from "src/app/models/CustomerOption";
 
 @Component({
   selector: "app-order-create",
@@ -12,9 +16,11 @@ import { Order } from "src/app/models/Order";
 })
 export class OrderCreateComponent implements OnInit {
   orderForm: FormGroup;
+  customerOptions: CustomerOption[];
 
   constructor(
     private orderService: OrderService,
+    private optionsService: OptionsService,
     private location: Location,
     private route: ActivatedRoute,
     private router: Router
@@ -37,6 +43,36 @@ export class OrderCreateComponent implements OnInit {
       ShipCountry: new FormControl(""),
       Details: new FormArray([])
     });
+
+    this.orderForm
+      .get("CustomerID")
+      .valueChanges.pipe(
+        debounceTime(300),
+        tap(val => console.log("keyword:" + val))
+      )
+      .subscribe(inputKeyword => {
+        this.optionsService.getCusomers(inputKeyword).subscribe(
+          queryOptions => {
+            this.customerOptions = queryOptions;
+          },
+          err => console.log("Error", err)
+        );
+      });
+  }
+
+  highlightFiltered(customerName: string) {
+    const inputCustomerKeyword = this.orderForm.get("CustomerID").value;
+
+    console.log("inputCustomerKeyword:" + inputCustomerKeyword);
+
+    const result = customerName.replace(
+      inputCustomerKeyword,
+      `<span class="autocomplete-highlight">${inputCustomerKeyword}</span>`
+    );
+
+console.log(result);
+
+    return result;
   }
 
   addDetails() {
@@ -58,6 +94,7 @@ export class OrderCreateComponent implements OnInit {
       err => console.log("Error", err)
     );
   }
+
   backToPreviousPage() {
     this.location.back();
   }
