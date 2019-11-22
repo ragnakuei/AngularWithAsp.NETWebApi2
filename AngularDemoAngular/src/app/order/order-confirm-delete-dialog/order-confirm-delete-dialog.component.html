@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Confirm Delete Order</h1>
+<div mat-dialog-content>
+  <p>Are you sure to delete orderId : {{ orderId }} ?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="clickConfirm()">Confirm</button>
+  <button mat-button (click)="clickCancel()" cdkFocusInitial>Cancel</button>
+</div>

@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, NavigationExtras } from "@angular/router";
 import { OrderList, OrderListItem } from "src/app/models/OrderList";
 import { OrderService } from "../order.service";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatDialog } from "@angular/material/dialog";
+import { OrderConfirmDeleteDialogComponent } from "../order-confirm-delete-dialog/order-confirm-delete-dialog.component";
 
 @Component({
   templateUrl: "./order.list.component.html",
@@ -31,7 +33,6 @@ export class OrderListComponent implements OnInit {
     "ShipRegion",
     "ShipPostalCode",
     "ShipCountry",
-    "DetailCount",
     "Management"
   ];
 
@@ -47,7 +48,7 @@ export class OrderListComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private router: Router,
-    private route: ActivatedRoute
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +69,27 @@ export class OrderListComponent implements OnInit {
     );
   }
 
+  goToDetailPage(orderId:number, isReadonly : boolean){
+    const navigationExtras: NavigationExtras = {state: {isReadonly: isReadonly}};
+    this.router.navigate(['/order/detail', orderId], navigationExtras);
+  }
+
   onSelect(orderId: number) {
     console.log(orderId);
+  }
+
+  openDeleteDialog(orderId: number): void {
+    const dialogRef = this.dialog.open(OrderConfirmDeleteDialogComponent, {
+      width: "250px",
+      data: orderId
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+
+      if (result === true) {
+        this.getOrderList(this.paginator.pageIndex, this.paginator.pageSize); 
+      }
+    });
   }
 }

@@ -29,7 +29,7 @@
   <ng-container matColumnDef="OrderID">
     <th mat-header-cell *matHeaderCellDef>OrderId</th>
     <td mat-cell *matCellDef="let order">
-      <span matBadge="{{order.DetailCount}}" matBadgeOverlap="false">
+      <span matBadge="{{ order.DetailCount }}" matBadgeOverlap="false">
         {{ order.OrderID }}
       </span>
     </td>
@@ -106,30 +106,26 @@
     <td mat-cell *matCellDef="let order">{{ order.ShipCountry }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="DetailCount">
-    <th mat-header-cell *matHeaderCellDef>DetailCount</th>
-    <td mat-cell *matCellDef="let order">{{ order.DetailCount }}</td>
-  </ng-container>
-
   <ng-container matColumnDef="Management">
     <th mat-header-cell *matHeaderCellDef>
       <span>Management</span>
     </th>
     <td mat-cell *matCellDef="let order">
       <button
+        (click)="goToDetailPage(order.OrderID, true)"
         mat-button
-        [routerLink]="['/order/edit/', order.OrderID]"
-        routerLinkActive="active"
+        color="primary"
+      >
+        Detail
+      </button>
+      <button
+        mat-button
+        (click)="goToDetailPage(order.OrderID, false)"
         color="primary"
       >
         Edit
       </button>
-      <button
-        mat-button
-        [routerLink]="['/order/delete/', order.OrderID]"
-        routerLinkActive="active"
-        color="warn"
-      >
+      <button mat-button (click)="openDeleteDialog(order.OrderID)" color="warn">
         Delete
       </button>
     </td>

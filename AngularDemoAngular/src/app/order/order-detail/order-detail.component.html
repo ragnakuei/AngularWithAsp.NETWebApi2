@@ -1,4 +1,4 @@
-<h2 class="mat-h2">OrderEdit</h2>
+<h2 class="mat-h2">{{ this.isReadOnly ? "OrderDetail" : "OrderEdit" }}</h2>
 
 <div *ngIf="this.orderForm">
   <form [formGroup]="orderForm" (ngSubmit)="onSubmit(orderForm.value)">
@@ -16,6 +16,7 @@
               matInput
               formControlName="OrderID"
               placeholder="OrderID"
+              readonly
             />
           </mat-form-field>
         </p>
@@ -24,6 +25,7 @@
             <input
               matInput
               formControlName="CustomerID"
+              readonly="{{ this.isReadOnly }}"
               placeholder="CustomerID"
             />
           </mat-form-field>
@@ -34,68 +36,99 @@
               type="number"
               matInput
               formControlName="EmployeeID"
+              readonly="{{ this.isReadOnly }}"
               placeholder="EmployeeID"
             />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field (click)="OrderDatePicker.open()">
+          <mat-form-field (click)="openDatePicker(OrderDatePicker)">
             <input
               matInput
               [matDatepicker]="OrderDatePicker"
               formControlName="OrderDate"
+              readonly="{{ this.isReadOnly }}"
               placeholder="OrderDate"
             />
             <mat-datepicker-toggle
               matSuffix
+              [ngStyle]="checkHidden()"
               [for]="OrderDatePicker"
             ></mat-datepicker-toggle>
-            <mat-datepicker #OrderDatePicker></mat-datepicker>
+            <mat-datepicker
+              #OrderDatePicker
+              [ngStyle]="checkHidden()"
+            ></mat-datepicker>
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field (click)="RequiredDatePicker.open()">
+          <mat-form-field (click)="openDatePicker(RequiredDatePicker)">
             <input
               matInput
               [matDatepicker]="RequiredDatePicker"
               formControlName="RequiredDate"
+              readonly="{{ this.isReadOnly }}"
               placeholder="RequiredDate"
             />
             <mat-datepicker-toggle
               matSuffix
+              [ngStyle]="checkHidden()"
               [for]="RequiredDatePicker"
             ></mat-datepicker-toggle>
-            <mat-datepicker #RequiredDatePicker></mat-datepicker>
+            <mat-datepicker
+              #RequiredDatePicker
+              [ngStyle]="checkHidden()"
+            ></mat-datepicker>
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field (click)="ShippedDatePicker.open()">
+          <mat-form-field (click)="openDatePicker(ShippedDatePicker)">
             <input
               matInput
               [matDatepicker]="ShippedDatePicker"
               formControlName="ShippedDate"
+              readonly="{{ this.isReadOnly }}"
               placeholder="ShippedDate"
             />
             <mat-datepicker-toggle
               matSuffix
+              [ngStyle]="checkHidden()"
               [for]="ShippedDatePicker"
             ></mat-datepicker-toggle>
-            <mat-datepicker #ShippedDatePicker></mat-datepicker>
+            <mat-datepicker
+              #ShippedDatePicker
+              [ngStyle]="checkHidden()"
+            ></mat-datepicker>
           </mat-form-field>
         </p>
         <p>
           <mat-form-field>
-            <input matInput formControlName="ShipVia" placeholder="ShipVia" />
+            <input
+              matInput
+              formControlName="ShipVia"
+              readonly="{{ this.isReadOnly }}"
+              placeholder="ShipVia"
+            />
           </mat-form-field>
         </p>
         <p>
           <mat-form-field>
-            <input matInput formControlName="Freight" placeholder="Freight" />
+            <input
+              matInput
+              formControlName="Freight"
+              readonly="{{ this.isReadOnly }}"
+              placeholder="Freight"
+            />
           </mat-form-field>
         </p>
         <p>
           <mat-form-field>
-            <input matInput formControlName="ShipName" placeholder="ShipName" />
+            <input
+              matInput
+              formControlName="ShipName"
+              readonly="{{ this.isReadOnly }}"
+              placeholder="ShipName"
+            />
           </mat-form-field>
         </p>
         <p>
@@ -103,13 +136,19 @@
             <input
               matInput
               formControlName="ShipAddress"
+              readonly="{{ this.isReadOnly }}"
               placeholder="ShipAddress"
             />
           </mat-form-field>
         </p>
         <p>
           <mat-form-field>
-            <input matInput formControlName="ShipCity" placeholder="ShipCity" />
+            <input
+              matInput
+              formControlName="ShipCity"
+              readonly="{{ this.isReadOnly }}"
+              placeholder="ShipCity"
+            />
           </mat-form-field>
         </p>
         <p>
@@ -117,6 +156,7 @@
             <input
               matInput
               formControlName="ShipRegion"
+              readonly="{{ this.isReadOnly }}"
               placeholder="ShipRegion"
             />
           </mat-form-field>
@@ -126,6 +166,7 @@
             <input
               matInput
               formControlName="ShipPostalCode"
+              readonly="{{ this.isReadOnly }}"
               placeholder="ShipPostalCode"
             />
           </mat-form-field>
@@ -135,6 +176,7 @@
             <input
               matInput
               formControlName="ShipCountry"
+              readonly="{{ this.isReadOnly }}"
               placeholder="ShipCountry"
             />
           </mat-form-field>
@@ -160,6 +202,7 @@
                     matInput
                     type="number"
                     formControlName="ProductID"
+                    readonly="{{ this.isReadOnly }}"
                     placeholder="ProductID"
                   />
                 </mat-form-field>
@@ -170,6 +213,7 @@
                     step="0.01"
                     matInput
                     formControlName="UnitPrice"
+                    readonly="{{ this.isReadOnly }}"
                     placeholder="UnitPrice"
                   />
                 </mat-form-field>
@@ -179,6 +223,7 @@
                     matInput
                     type="number"
                     formControlName="Quantity"
+                    readonly="{{ this.isReadOnly }}"
                     placeholder="Quantity"
                   />
                 </mat-form-field>
@@ -191,6 +236,7 @@
                     min="0"
                     max="1"
                     formControlName="Discount"
+                    readonly="{{ this.isReadOnly }}"
                     placeholder="Discount"
                   />
                 </mat-form-field>
@@ -200,6 +246,7 @@
 
           <mat-card-actions>
             <button
+              *ngIf="!this.isReadOnly"
               (click)="addDetails()"
               type="button"
               mat-button
@@ -211,17 +258,53 @@
         </mat-card>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-button color="primary" type="submit">
+        <button
+          *ngIf="!this.isReadOnly"
+          mat-button
+          color="primary"
+          type="submit"
+        >
           Submit
         </button>
 
         <button
+          *ngIf="!this.isReadOnly"
+          mat-button
+          color="primary"
+          type="button"
+          (click)="changeToReadOnlyMode()"
+        >
+          Cancel
+        </button>
+
+        <button
+          *ngIf="this.isReadOnly"
+          mat-button
+          color="primary"
+          type="button"
+          (click)="changeToEditMode()"
+        >
+          Edit
+        </button>
+
+        <button
+          *ngIf="this.isReadOnly"
+          mat-button
+          color="warn"
+          type="button"
+          (click)="deleteOrder()"
+        >
+          Delete
+        </button>
+
+        <button
+          *ngIf="this.isReadOnly"
           mat-button
           color="primary"
           type="button"
           (click)="backToPreviousPage()"
         >
-          Cancel
+          Back
         </button>
       </mat-card-actions>
     </mat-card>

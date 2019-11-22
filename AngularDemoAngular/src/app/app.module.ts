@@ -30,18 +30,20 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatCardModule } from "@angular/material/card";
 import { MatBadgeModule } from "@angular/material/badge";
+import { MatDialogModule } from "@angular/material/dialog";
 
 // Component
 import { HomeComponent } from "./home/home.component";
 import { OrderComponent } from "./order/order.component";
 import { OrderListComponent } from "./order/order-list/order.list.component";
-import { OrderEditComponent } from "./order/order-edit/order-edit.component";
+import { OrderDetailComponent } from "./order/order-detail/order-detail.component";
 import { OrderCreateComponent } from "./order/order-create/order-create.component";
 import { OrderDeleteComponent } from "./order/order-delete/order-delete.component";
 import { AppHeaderComponent } from "./app-header/app-header.component";
 import { AppFooterComponent } from "./app-footer/app-footer.component";
 import { AppSidenavComponent } from "./app-sidenav/app-sidenav.component";
 import { TW_FORMATS } from "./datepicker-formats/TW_FORMATS";
+import { OrderConfirmDeleteDialogComponent } from './order/order-confirm-delete-dialog/order-confirm-delete-dialog.component';
 
 @NgModule({
   declarations: [
@@ -49,12 +51,13 @@ import { TW_FORMATS } from "./datepicker-formats/TW_FORMATS";
     HomeComponent,
     OrderComponent,
     OrderListComponent,
-    OrderEditComponent,
+    OrderDetailComponent,
     OrderCreateComponent,
     OrderDeleteComponent,
     AppHeaderComponent,
     AppFooterComponent,
-    AppSidenavComponent
+    AppSidenavComponent,
+    OrderConfirmDeleteDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -77,7 +80,11 @@ import { TW_FORMATS } from "./datepicker-formats/TW_FORMATS";
     MatDatepickerModule,
     MatExpansionModule,
     MatCardModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatDialogModule
+  ],
+  entryComponents: [
+    OrderConfirmDeleteDialogComponent
   ],
   providers: [
     OrderService,

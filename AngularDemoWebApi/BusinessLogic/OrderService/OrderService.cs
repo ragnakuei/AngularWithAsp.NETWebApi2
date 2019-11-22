@@ -150,9 +150,7 @@ where od.OrderID = @orderId
 
         public int CreateOrder(OrderDto orderDto)
         {
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
-            {
-                var sql = @"
+            var sql = @"
 declare @maxOrderId int
 select @maxOrderId = max(od.OrderID) + 1
 from dbo.Orders od
@@ -190,24 +188,40 @@ from @OrderDetails
 
 select @maxOrderId
 ";
-                var dynamicParemeter = new DynamicParameters();
-                dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size : 5);
-                dynamicParemeter.Add("EmployeeID", orderDto.EmployeeID, DbType.Int32);
-                dynamicParemeter.Add("OrderDate", orderDto.OrderDate, DbType.Date);
-                dynamicParemeter.Add("RequiredDate", orderDto.RequiredDate, DbType.Date);
-                dynamicParemeter.Add("ShippedDate", orderDto.ShippedDate, DbType.Date);
-                dynamicParemeter.Add("ShipVia", orderDto.ShipVia, DbType.Int32);
-                dynamicParemeter.Add("Freight", orderDto.Freight, DbType.Decimal);
-                dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size : 40);
-                dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size : 60);
-                dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size : 15);
-                dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size : 15);
-                dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size : 10);
-                dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size : 15);
-                dynamicParemeter.Add("OrderDetails", GenerateOrderDetailsDataTable(orderDto.Details).AsTableValuedParameter("dbo.ut_OrderDetail"));
+            var dynamicParemeter = new DynamicParameters();
+            dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size : 5);
+            dynamicParemeter.Add("EmployeeID", orderDto.EmployeeID, DbType.Int32);
+            dynamicParemeter.Add("OrderDate", orderDto.OrderDate, DbType.Date);
+            dynamicParemeter.Add("RequiredDate", orderDto.RequiredDate, DbType.Date);
+            dynamicParemeter.Add("ShippedDate", orderDto.ShippedDate, DbType.Date);
+            dynamicParemeter.Add("ShipVia", orderDto.ShipVia, DbType.Int32);
+            dynamicParemeter.Add("Freight", orderDto.Freight, DbType.Decimal);
+            dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size : 40);
+            dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size : 60);
+            dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size : 15);
+            dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size : 15);
+            dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size : 10);
+            dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size : 15);
+            dynamicParemeter.Add("OrderDetails", GenerateOrderDetailsDataTable(orderDto.Details).AsTableValuedParameter("dbo.ut_OrderDetail"));
 
-                return connection.Query<int>(sql, dynamicParemeter).FirstOrDefault();
+            var newOrderId = 0;
+            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            {
+                using (var tran = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        newOrderId = connection.Query<int>(sql, dynamicParemeter).FirstOrDefault();
+                        tran.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        tran.Rollback();
+                        throw e;
+                    }
+                }
             }
+            return newOrderId;
         }
 
         public void UpdateOrder(int orderId, OrderDto orderDto)
