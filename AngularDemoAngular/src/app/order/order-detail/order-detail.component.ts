@@ -6,8 +6,8 @@ import { ActivatedRoute, Router, Params } from "@angular/router";
 import { Order } from "src/app/models/Order";
 import { MatDialog } from "@angular/material/dialog";
 import { OrderConfirmDeleteDialogComponent } from "../order-confirm-delete-dialog/order-confirm-delete-dialog.component";
-import { MatDatepicker } from '@angular/material/datepicker';
-import { retryWhen } from 'rxjs/operators';
+import { MatDatepicker } from "@angular/material/datepicker";
+import { OrderDetail } from 'src/app/models/OrderDetail';
 
 @Component({
   selector: "app-order-detail",
@@ -16,6 +16,7 @@ import { retryWhen } from 'rxjs/operators';
 })
 export class OrderDetailComponent implements OnInit {
   orderId: number;
+  order: Order;
   orderForm: FormGroup;
   isReadOnly: boolean = true;
 
@@ -30,7 +31,7 @@ export class OrderDetailComponent implements OnInit {
     if (this.router.getCurrentNavigation().extras.state != undefined) {
       this.isReadOnly = this.router.getCurrentNavigation().extras.state.isReadonly;
     }
-    console.log('isReadOnly:' +this.isReadOnly);
+    console.log("isReadOnly:" + this.isReadOnly);
   }
 
   ngOnInit() {
@@ -40,6 +41,7 @@ export class OrderDetailComponent implements OnInit {
       this.orderId = params["id"];
       this.orderService.getOrder(this.orderId).subscribe(
         responseOrder => {
+          this.order = responseOrder;
           this.orderForm = this.formBuilder.group({
             OrderID: [responseOrder.OrderID],
             CustomerID: [responseOrder.CustomerID, Validators.required],
@@ -83,7 +85,26 @@ export class OrderDetailComponent implements OnInit {
     );
   }
 
+  removeDetail(detailIndex: number) {
+    (this.orderForm.get("Details") as FormArray).removeAt(detailIndex);
+  }
+
   changeToReadOnlyMode() {
+    this.orderForm.reset(this.order);
+
+    const detailFormArray = (this.orderForm.get("Details") as FormArray);
+    detailFormArray.clear();
+    
+    for(var detail of this.order.Details)
+    {
+        detailFormArray.push(this.formBuilder.group({
+            ProductID: [detail.ProductID],
+            UnitPrice: [detail.UnitPrice],
+            Quantity: [detail.Quantity],
+            Discount: [detail.Discount]
+          }));
+    }
+ 
     this.isReadOnly = true;
   }
 
@@ -98,13 +119,12 @@ export class OrderDetailComponent implements OnInit {
     return hiddenStyle;
   }
 
-  openDatePicker(datePicker : MatDatepicker<any>) {
-      if(this.isReadOnly)
-      {
-          return;
-      }
+  openDatePicker(datePicker: MatDatepicker<any>) {
+    if (this.isReadOnly) {
+      return;
+    }
 
-      datePicker.open();
+    datePicker.open();
   }
 
   deleteOrder() {

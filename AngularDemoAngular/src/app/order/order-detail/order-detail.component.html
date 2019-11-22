@@ -240,6 +240,15 @@
                     placeholder="Discount"
                   />
                 </mat-form-field>
+
+                <button
+                  mat-icon-button
+                  (click)="removeDetail(detailIndex)"
+                  [ngStyle]="checkHidden()"
+                  color="warn"
+                >
+                  <mat-icon>remove_circle</mat-icon>
+                </button>
               </mat-list-item>
             </mat-list>
           </mat-card-content>
