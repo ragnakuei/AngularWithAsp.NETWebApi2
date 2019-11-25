@@ -1,5 +1,5 @@
 import { Location } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormArray, FormControl, FormGroup } from "@angular/forms";
 import {
   MatAutocompleteModule,
@@ -13,6 +13,7 @@ import { OptionsService } from "src/app/options.service";
 import { OrderService } from "../order.service";
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   selector: "app-order-create",
   styleUrls: ["./order-create.component.css"],
   templateUrl: "./order-create.component.html"
@@ -27,11 +28,7 @@ export class OrderCreateComponent implements OnInit {
     private location: Location,
     private route: ActivatedRoute,
     private router: Router
-  ) {
-    // setInterval(() => {
-    //   console.log(this.customerOptions);
-    // }, 1000);
-  }
+  ) {}
 
   public ngOnInit() {
     this.orderForm = new FormGroup({
@@ -72,19 +69,23 @@ export class OrderCreateComponent implements OnInit {
   }
 
   public highlightFiltered(customerName: string) {
+
+    console.log('highlightFiltered');
+
+    const inputCustomerKeyword = this.orderForm.get("CustomerID").value;
+    if (typeof inputCustomerKeyword === "string") {
+      const pattern = inputCustomerKeyword
+        .replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+        .split(" ")
+        .filter(t => t.length > 0)
+        .join("|");
+      const regex = new RegExp(pattern, "gi");
+
+      return inputCustomerKeyword
+        ? customerName.replace(regex, match => `<span class="autocomplete-highlight">${match}</span>`)
+        : customerName;
+    }
     return customerName;
-    // const inputCustomerKeyword = this.orderForm.get("CustomerID").value;
-
-    // console.log("inputCustomerKeyword:" + inputCustomerKeyword);
-
-    // const result = customerName.replace(
-    //   inputCustomerKeyword,
-    //   `<span class="autocomplete-highlight">${inputCustomerKeyword}</span>`
-    // );
-
-    // console.log(result);
-
-    // return result;
   }
 
   public addDetails() {

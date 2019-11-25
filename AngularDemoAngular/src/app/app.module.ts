@@ -59,7 +59,7 @@ import { OrderConfirmDeleteDialogComponent } from "./order/order-confirm-delete-
     AppHeaderComponent,
     AppFooterComponent,
     AppSidenavComponent,
-    OrderConfirmDeleteDialogComponent
+    OrderConfirmDeleteDialogComponent,
   ],
   imports: [
     BrowserModule,

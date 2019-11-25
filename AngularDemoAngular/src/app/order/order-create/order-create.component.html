@@ -29,7 +29,7 @@
               [value]="customerOption"
             >
               <span
-                innerHTML="{{ highlightFiltered(customerOption.CompanyName) }}"
+                [innerHTML]="highlightFiltered(customerOption.CompanyName)"
               ></span>
             </mat-option>
           </mat-autocomplete>
