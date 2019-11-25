@@ -19,12 +19,18 @@
             />
           </mat-form-field>
 
-          <mat-autocomplete #customerAutoComplete="matAutocomplete">
+          <mat-autocomplete
+            #customerAutoComplete="matAutocomplete"
+            (optionSelected)="onCustomerOptionChanged($event)"
+            [displayWith]="displayCustomer"
+          >
             <mat-option
               *ngFor="let customerOption of customerOptions"
-              [value]="customerOption.CompanyName"
+              [value]="customerOption"
             >
-              <span innerHTML="{{highlightFiltered(customerOption.CompanyName)}}"></span>
+              <span
+                innerHTML="{{ highlightFiltered(customerOption.CompanyName) }}"
+              ></span>
             </mat-option>
           </mat-autocomplete>
         </p>

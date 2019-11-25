@@ -207,11 +207,16 @@ select @maxOrderId
             var newOrderId = 0;
             using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
             {
+                if(connection.State == ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
+
                 using (var tran = connection.BeginTransaction())
                 {
                     try
                     {
-                        newOrderId = connection.Query<int>(sql, dynamicParemeter).FirstOrDefault();
+                        newOrderId = connection.Query<int>(sql, dynamicParemeter, transaction: tran).FirstOrDefault();
                         tran.Commit();
                     }
                     catch (Exception e)
