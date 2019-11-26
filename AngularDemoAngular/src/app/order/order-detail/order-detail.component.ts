@@ -155,6 +155,6 @@ export class OrderDetailComponent implements OnInit {
   }
 
   backToPreviousPage() {
-    this.location.back();
+    this.router.navigate(["/order"]);
   }
 }

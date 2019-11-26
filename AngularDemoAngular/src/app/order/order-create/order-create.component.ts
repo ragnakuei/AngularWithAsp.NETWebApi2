@@ -1,10 +1,7 @@
 import { Location } from "@angular/common";
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormArray, FormControl, FormGroup } from "@angular/forms";
-import {
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent
-} from "@angular/material/autocomplete";
+import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { ActivatedRoute, Router } from "@angular/router";
 import { debounceTime, tap } from "rxjs/operators";
 import { CustomerOption } from "src/app/models/CustomerOption";
