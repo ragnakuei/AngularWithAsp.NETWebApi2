@@ -14,10 +14,61 @@ namespace BusinessLogic.Order
     public class OrderService : IOrderService
     {
         private readonly IConfigurationService _configurationService;
+        private string _connectionString;
 
         public OrderService(IConfigurationService configurationService)
         {
             _configurationService = configurationService;
+            _connectionString = _configurationService.GetConnectionString("Northwind");
+        }
+
+        public DataTable GetOrderList()
+        {
+            var sql = @"
+DECLARE @OrderIds table
+                  (
+                      OrderID int
+                  )
+
+INSERT INTO @OrderIds(OrderID)
+SELECT OrderID
+FROM dbo.Orders
+--ORDER BY OrderID
+--    OFFSET @skipCount ROWS
+--FETCH NEXT @pageSize ROWS ONLY;
+
+SELECT *
+FROM dbo.Orders o
+    JOIN @OrderIds oIds
+         ON oIds.OrderID = o.OrderID
+    JOIN (
+                    SELECT od.OrderID, COUNT(0) AS DetailCOunt
+                    FROM dbo.[Order Details] od
+                    GROUP BY od.OrderID
+                ) dc
+				on dc.OrderID = o.OrderID
+";
+            var queryResult = new DataSet();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand(sql, connection);
+
+                try
+                {
+                    connection.Open();
+                    var da = new SqlDataAdapter(command);
+                    da.Fill(queryResult);
+                    connection.Close();
+                    da.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    connection.Close();
+                    throw ex;
+                }
+            }
+
+            return queryResult.Tables[0];
         }
 
         public OrderListDto GetOrderList(int pageIndex, int pageSize)
@@ -26,7 +77,7 @@ namespace BusinessLogic.Order
             var orderDetails = Enumerable.Empty<int>();
             var totalCount = 0;
 
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 DECLARE @OrderIds table
@@ -69,30 +120,30 @@ FROM dbo.orders
                                                .ToDictionary(od => od.Key, od => od.Count());
 
             var result = new OrderListDto
-                         {
-                             TotalCount = totalCount,
-                             Items = orders.Select(o =>
-                                                   {
-                                                       return new OrderListItemDto
-                                                              {
-                                                                  OrderID = o.OrderID,
-                                                                  CustomerID = o.CustomerID,
-                                                                  EmployeeID = o.EmployeeID,
-                                                                  OrderDate = o.OrderDate,
-                                                                  RequiredDate = o.RequiredDate,
-                                                                  ShippedDate = o.ShippedDate,
-                                                                  ShipVia = o.ShipVia,
-                                                                  Freight = o.Freight,
-                                                                  ShipName = o.ShipName,
-                                                                  ShipAddress = o.ShipAddress,
-                                                                  ShipCity = o.ShipCity,
-                                                                  ShipRegion = o.ShipRegion,
-                                                                  ShipPostalCode = o.ShipPostalCode,
-                                                                  ShipCountry = o.ShipCountry,
-                                                                  DetailCount = orderDetailCount.GetValue(o.OrderID)
-                                                              };
-                                                   }).ToArray()
-                         };
+            {
+                TotalCount = totalCount,
+                Items = orders.Select(o =>
+                                      {
+                                          return new OrderListItemDto
+                                          {
+                                              OrderID = o.OrderID,
+                                              CustomerID = o.CustomerID,
+                                              EmployeeID = o.EmployeeID,
+                                              OrderDate = o.OrderDate,
+                                              RequiredDate = o.RequiredDate,
+                                              ShippedDate = o.ShippedDate,
+                                              ShipVia = o.ShipVia,
+                                              Freight = o.Freight,
+                                              ShipName = o.ShipName,
+                                              ShipAddress = o.ShipAddress,
+                                              ShipCity = o.ShipCity,
+                                              ShipRegion = o.ShipRegion,
+                                              ShipPostalCode = o.ShipPostalCode,
+                                              ShipCountry = o.ShipCountry,
+                                              DetailCount = orderDetailCount.GetValue(o.OrderID)
+                                          };
+                                      }).ToArray()
+            };
 
             return result;
         }
@@ -102,7 +153,7 @@ FROM dbo.orders
             SharedLibrary.Entity.Order order = null;
             var orderDetails = Enumerable.Empty<OrderDetail>();
 
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 select o.*
@@ -122,29 +173,29 @@ where od.OrderID = @orderId
             }
 
             var result = new OrderDto
-                         {
-                             OrderID = order.OrderID,
-                             CustomerID = order.CustomerID,
-                             EmployeeID = order.EmployeeID,
-                             OrderDate = order.OrderDate,
-                             RequiredDate = order.RequiredDate,
-                             ShippedDate = order.ShippedDate,
-                             ShipVia = order.ShipVia,
-                             Freight = order.Freight,
-                             ShipName = order.ShipName,
-                             ShipAddress = order.ShipAddress,
-                             ShipCity = order.ShipCity,
-                             ShipRegion = order.ShipRegion,
-                             ShipPostalCode = order.ShipPostalCode,
-                             ShipCountry = order.ShipCountry,
-                             Details = orderDetails.Select(od => new OrderDetailDto
-                                                                 {
-                                                                     ProductID = od.ProductID,
-                                                                     UnitPrice = od.UnitPrice,
-                                                                     Quantity = od.Quantity,
-                                                                     Discount = od.Discount,
-                                                                 }).ToArray(),
-                         };
+            {
+                OrderID = order.OrderID,
+                CustomerID = order.CustomerID,
+                EmployeeID = order.EmployeeID,
+                OrderDate = order.OrderDate,
+                RequiredDate = order.RequiredDate,
+                ShippedDate = order.ShippedDate,
+                ShipVia = order.ShipVia,
+                Freight = order.Freight,
+                ShipName = order.ShipName,
+                ShipAddress = order.ShipAddress,
+                ShipCity = order.ShipCity,
+                ShipRegion = order.ShipRegion,
+                ShipPostalCode = order.ShipPostalCode,
+                ShipCountry = order.ShipCountry,
+                Details = orderDetails.Select(od => new OrderDetailDto
+                {
+                    ProductID = od.ProductID,
+                    UnitPrice = od.UnitPrice,
+                    Quantity = od.Quantity,
+                    Discount = od.Discount,
+                }).ToArray(),
+            };
             return result;
         }
 
@@ -189,25 +240,25 @@ from @OrderDetails
 select @maxOrderId
 ";
             var dynamicParemeter = new DynamicParameters();
-            dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size : 5);
+            dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size: 5);
             dynamicParemeter.Add("EmployeeID", orderDto.EmployeeID, DbType.Int32);
             dynamicParemeter.Add("OrderDate", orderDto.OrderDate, DbType.Date);
             dynamicParemeter.Add("RequiredDate", orderDto.RequiredDate, DbType.Date);
             dynamicParemeter.Add("ShippedDate", orderDto.ShippedDate, DbType.Date);
             dynamicParemeter.Add("ShipVia", orderDto.ShipVia, DbType.Int32);
             dynamicParemeter.Add("Freight", orderDto.Freight, DbType.Decimal);
-            dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size : 40);
-            dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size : 60);
-            dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size : 15);
-            dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size : 15);
-            dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size : 10);
-            dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size : 15);
+            dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size: 40);
+            dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size: 60);
+            dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size: 15);
+            dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size: 15);
+            dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size: 10);
+            dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size: 15);
             dynamicParemeter.Add("OrderDetails", GenerateOrderDetailsDataTable(orderDto.Details).AsTableValuedParameter("dbo.ut_OrderDetail"));
 
             var newOrderId = 0;
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
-                if(connection.State == ConnectionState.Closed)
+                if (connection.State == ConnectionState.Closed)
                 {
                     connection.Open();
                 }
@@ -231,7 +282,7 @@ select @maxOrderId
 
         public void UpdateOrder(int orderId, OrderDto orderDto)
         {
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 update dbo.orders
@@ -259,19 +310,19 @@ from @OrderDetails
 ";
                 var dynamicParemeter = new DynamicParameters();
                 dynamicParemeter.Add("OrderId", orderDto.OrderID, DbType.Int32);
-                dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size : 5);
+                dynamicParemeter.Add("CustomerID", orderDto.CustomerID, DbType.StringFixedLength, size: 5);
                 dynamicParemeter.Add("EmployeeID", orderDto.EmployeeID, DbType.Int32);
                 dynamicParemeter.Add("OrderDate", orderDto.OrderDate, DbType.Date);
                 dynamicParemeter.Add("RequiredDate", orderDto.RequiredDate, DbType.Date);
                 dynamicParemeter.Add("ShippedDate", orderDto.ShippedDate, DbType.Date);
                 dynamicParemeter.Add("ShipVia", orderDto.ShipVia, DbType.Int32);
                 dynamicParemeter.Add("Freight", orderDto.Freight, DbType.Decimal);
-                dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size : 40);
-                dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size : 60);
-                dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size : 15);
-                dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size : 15);
-                dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size : 10);
-                dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size : 15);
+                dynamicParemeter.Add("ShipName", orderDto.ShipName, DbType.String, size: 40);
+                dynamicParemeter.Add("ShipAddress", orderDto.ShipAddress, DbType.String, size: 60);
+                dynamicParemeter.Add("ShipCity", orderDto.ShipCity, DbType.String, size: 15);
+                dynamicParemeter.Add("ShipRegion", orderDto.ShipRegion, DbType.String, size: 15);
+                dynamicParemeter.Add("ShipPostalCode", orderDto.ShipPostalCode, DbType.String, size: 10);
+                dynamicParemeter.Add("ShipCountry", orderDto.ShipCountry, DbType.String, size: 15);
                 dynamicParemeter.Add("OrderDetails", GenerateOrderDetailsDataTable(orderDto.Details).AsTableValuedParameter("dbo.ut_OrderDetail"));
 
                 connection.Execute(sql, dynamicParemeter);
@@ -321,7 +372,7 @@ from @OrderDetails
 
         public void DeleteOrder(int orderId)
         {
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 DELETE dbo.[Order Details]

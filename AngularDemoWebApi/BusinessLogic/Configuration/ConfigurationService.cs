@@ -6,7 +6,7 @@ namespace BusinessLogic.Configuration
     {
         public string GetConnectionString(string name)
         {
-            return ConfigurationManager.ConnectionStrings[name].ConnectionString;
+            return ConfigurationManager.ConnectionStrings[name]?.ConnectionString;
         }
     }
 }

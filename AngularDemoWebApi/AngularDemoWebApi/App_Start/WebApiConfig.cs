@@ -4,6 +4,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.Dispatcher;
 using AngularDemoWebApi.Controllers;
+using BusinessLogic.DI;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AngularDemoWebApi

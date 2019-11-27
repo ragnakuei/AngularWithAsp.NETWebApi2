@@ -54,6 +54,7 @@
                         <li><a runat="server" href="~/">首頁</a></li>
                         <li><a runat="server" href="~/About">關於</a></li>
                         <li><a runat="server" href="~/Contact">連絡人</a></li>
+                        <li><a runat="server" href="~/Order/List">Orders</a></li>
                     </ul>
                 </div>
             </div>
