@@ -7,28 +7,33 @@ namespace AngularDemoWebForm.Order
 {
     public partial class List : System.Web.UI.Page
     {
-        public IOrderService _orderService
-            => DiFactory.GetService<IOrderService>();
+        public IOrderService _orderService => DiFactory.GetService<IOrderService>();
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            var orderListFromDb = _orderService?.GetOrderList();
-
-            orderList.DataSource = orderListFromDb;
-            orderList.DataBind();
-
-            if ((orderList.ShowHeader == true && orderList.Rows.Count > 0)
-             || (orderList.ShowHeaderWhenEmpty == true))
+            if (!this.IsPostBack)
             {
-                orderList.HeaderRow.TableSection = TableRowSection.TableHeader;
-            }
+                if ((orderList.ShowHeader && orderList.Rows.Count > 0)
+                 || (orderList.ShowHeaderWhenEmpty))
+                {
+                    orderList.HeaderRow.TableSection = TableRowSection.TableHeader;
+                }
 
-            orderList.GridLines = GridLines.None;
+                SetOrderListDataSource(0, orderList.PageSize);
+            }
         }
 
-        protected void btnDetailClick(object sender, EventArgs e)
+
+        private void SetOrderListDataSource(int pageIndex, int pageSize)
         {
-            var target = sender;
+            orderList.DataSource = _orderService?.GetOrderListToDataTable(pageIndex, pageSize);
+            orderList.DataBind();
+        }
+
+        protected void orderListOnPageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            orderList.PageIndex = e.NewPageIndex;
+            SetOrderListDataSource(0, 10);
         }
     }
 }

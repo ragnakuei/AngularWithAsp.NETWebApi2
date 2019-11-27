@@ -22,7 +22,7 @@ namespace BusinessLogic.Order
             _connectionString = _configurationService.GetConnectionString("Northwind");
         }
 
-        public DataTable GetOrderList()
+        public DataTable GetOrderListToDataTable(int pageIndex, int pageSize)
         {
             var sql = @"
 DECLARE @OrderIds table
@@ -33,9 +33,9 @@ DECLARE @OrderIds table
 INSERT INTO @OrderIds(OrderID)
 SELECT OrderID
 FROM dbo.Orders
---ORDER BY OrderID
---    OFFSET @skipCount ROWS
---FETCH NEXT @pageSize ROWS ONLY;
+ORDER BY OrderID
+    OFFSET @skipCount ROWS
+FETCH NEXT @pageSize ROWS ONLY;
 
 SELECT *
 FROM dbo.Orders o
@@ -48,27 +48,46 @@ FROM dbo.Orders o
                 ) dc
 				on dc.OrderID = o.OrderID
 ";
-            var queryResult = new DataSet();
+            var queryResult = new DataTable();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 var command = new SqlCommand(sql, connection);
+                command.Parameters.AddRange(
+                    new SqlParameter[]
+                    {
+                        new SqlParameter("@skipCount", SqlDbType.Int){ Value = (pageIndex * pageSize)},
+                        new SqlParameter("@pageSize", pageSize){ Value = pageSize},
+                    }
+                );
+
+                SqlDataReader dr = null;
 
                 try
                 {
-                    connection.Open();
-                    var da = new SqlDataAdapter(command);
-                    da.Fill(queryResult);
-                    connection.Close();
-                    da.Dispose();
+                    if (connection.State != ConnectionState.Open)
+                    {
+                        connection.Open();
+                    }
+
+                    dr = command.ExecuteReader();
+                    queryResult.Load(dr);
+
+                    if (connection.State != ConnectionState.Closed)
+                    {
+                        connection.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    connection.Close();
+                    if (connection.State != ConnectionState.Closed)
+                    {
+                        connection.Close();
+                    }
                     throw ex;
                 }
             }
 
-            return queryResult.Tables[0];
+            return queryResult;
         }
 
         public OrderListDto GetOrderList(int pageIndex, int pageSize)
