@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace SharedLibrary.Dto
 {
@@ -6,6 +7,12 @@ namespace SharedLibrary.Dto
     {
         public int TotalCount { get; set; }
         public OrderListItemDto[] Items { get; set; }
+    }
+    
+    public class OrderListDataTable
+    {
+        public int TotalCount { get; set; }
+        public DataTable Items { get; set; }
     }
     
     public class OrderListItemDto

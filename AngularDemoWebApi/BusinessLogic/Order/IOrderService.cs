@@ -5,7 +5,7 @@ namespace BusinessLogic.Order
 {
     public interface IOrderService
     {
-        DataTable GetOrderListToDataTable(int pageIndex, int pageSize);
+        OrderListDataTable GetOrderListToDataTable(int pageIndex, int pageSize);
         OrderListDto GetOrderList(int pageIndex, int pageSize);
         OrderDto GetOrder(int orderId);
         void UpdateOrder(int orderId, OrderDto orderDto);

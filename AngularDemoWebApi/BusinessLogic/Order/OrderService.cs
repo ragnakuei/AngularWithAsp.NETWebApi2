@@ -22,7 +22,7 @@ namespace BusinessLogic.Order
             _connectionString = _configurationService.GetConnectionString("Northwind");
         }
 
-        public DataTable GetOrderListToDataTable(int pageIndex, int pageSize)
+        public OrderListDataTable GetOrderListToDataTable(int pageIndex, int pageSize)
         {
             var sql = @"
 DECLARE @OrderIds table
@@ -47,8 +47,13 @@ FROM dbo.Orders o
                     GROUP BY od.OrderID
                 ) dc
 				on dc.OrderID = o.OrderID
+
+SELECT count(0) as TotalCount
+FROM dbo.orders
 ";
             var queryResult = new DataTable();
+            var queryTotalCount = new DataTable();
+            
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 var command = new SqlCommand(sql, connection);
@@ -70,8 +75,10 @@ FROM dbo.Orders o
                     }
 
                     dr = command.ExecuteReader();
+                    
                     queryResult.Load(dr);
-
+                    queryTotalCount.Load(dr);
+                    
                     if (connection.State != ConnectionState.Closed)
                     {
                         connection.Close();
@@ -87,7 +94,12 @@ FROM dbo.Orders o
                 }
             }
 
-            return queryResult;
+            var result = new OrderListDataTable
+                         {
+                             TotalCount = queryTotalCount.Rows[0][0].ToInt32(),
+                             Items = queryResult
+                         };
+            return result;
         }
 
         public OrderListDto GetOrderList(int pageIndex, int pageSize)

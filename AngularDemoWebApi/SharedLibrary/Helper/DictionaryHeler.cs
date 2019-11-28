@@ -4,9 +4,7 @@ namespace SharedLibrary.Helper
 {
     public static class DictionaryHeler
     {
-        public static TValue GetValue<TKey, TValue>(this Dictionary<TKey, TValue> dict
-                                                  , TKey key
-                                                  , TValue value = default)
+        public static TValue GetValue<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value = default)
         {
             if (dict.ContainsKey(key))
             {

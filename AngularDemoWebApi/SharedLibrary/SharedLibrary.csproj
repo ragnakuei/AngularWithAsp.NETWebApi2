@@ -47,6 +47,7 @@
     <Compile Include="Dto\CustomerOption.cs" />
     <Compile Include="Entity\Order.cs" />
     <Compile Include="Entity\OrderDetail.cs" />
+    <Compile Include="Helper\CommonHeler.cs" />
     <Compile Include="Helper\DictionaryHeler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

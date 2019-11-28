@@ -1,16 +1,27 @@
 ﻿using AngularDemoWebForm.DI;
 using BusinessLogic.Order;
 using System;
+using System.Web;
 using System.Web.UI.WebControls;
+using AngularDemoWebForm.UserControls;
+using SharedLibrary.Helper;
 
 namespace AngularDemoWebForm.Order
 {
     public partial class List : System.Web.UI.Page
     {
-        public IOrderService _orderService => DiFactory.GetService<IOrderService>();
-
-        protected void Page_Load(object sender, EventArgs e)
+        private const int DefaultPageSize = 10;
+        private int _pageIndex;
+        private int _totalCount;
+        private int _pageSize;
+        private IOrderService _orderService => DiFactory.GetService<IOrderService>();
+        
+        protected override void OnPreLoad(EventArgs e)
         {
+            base.OnPreLoad(e);
+
+            ExtractQueryString();
+            
             if (!this.IsPostBack)
             {
                 if ((orderList.ShowHeader && orderList.Rows.Count > 0)
@@ -19,14 +30,32 @@ namespace AngularDemoWebForm.Order
                     orderList.HeaderRow.TableSection = TableRowSection.TableHeader;
                 }
 
-                SetOrderListDataSource(0, orderList.PageSize);
+                SetOrderListDataSource(_pageIndex, _pageSize);
             }
+            
+            var pagination = (BootstrapPagination)Page.LoadControl("~/UserControls/BootstrapPagination.ascx");
+            pagination.PageIndex = _pageIndex;
+            pagination.TotalCount = _totalCount;
+            pagination.PageSize = _pageSize;
+            pagination.Positon = "right";
+            upperPagination.Controls.Add(pagination);
+            bottomPagination.Controls.Add(pagination.DeepClone());
         }
 
+        private void ExtractQueryString()
+        {
+            var queryString = Request.QueryString;
+            _pageSize = queryString["pageSize"]?.ToInt32() ?? DefaultPageSize;
+            _pageIndex = queryString["pageIndex"]?.ToInt32() ?? 0;
+        }
 
         private void SetOrderListDataSource(int pageIndex, int pageSize)
         {
-            orderList.DataSource = _orderService?.GetOrderListToDataTable(pageIndex, pageSize);
+            var orderListDto = _orderService?.GetOrderListToDataTable(pageIndex, pageSize);
+
+            _totalCount = orderListDto.TotalCount;
+            
+            orderList.DataSource = orderListDto.Items;
             orderList.DataBind();
         }
 
