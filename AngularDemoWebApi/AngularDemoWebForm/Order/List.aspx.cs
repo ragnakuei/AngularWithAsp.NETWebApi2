@@ -1,7 +1,6 @@
 ﻿using AngularDemoWebForm.DI;
 using BusinessLogic.Order;
 using System;
-using System.Web;
 using System.Web.UI.WebControls;
 using AngularDemoWebForm.UserControls;
 using SharedLibrary.Helper;
@@ -11,6 +10,10 @@ namespace AngularDemoWebForm.Order
     public partial class List : System.Web.UI.Page
     {
         private const int DefaultPageSize = 10;
+        
+        /// <summary>
+        /// UI 上是 Base 1，資料處理是 Base 0
+        /// </summary>
         private int _pageIndex;
         private int _totalCount;
         private int _pageSize;
@@ -34,7 +37,7 @@ namespace AngularDemoWebForm.Order
             }
             
             var pagination = (BootstrapPagination)Page.LoadControl("~/UserControls/BootstrapPagination.ascx");
-            pagination.PageIndex = _pageIndex;
+            pagination.PageIndex = _pageIndex + 1;
             pagination.TotalCount = _totalCount;
             pagination.PageSize = _pageSize;
             pagination.Positon = "right";
@@ -46,7 +49,7 @@ namespace AngularDemoWebForm.Order
         {
             var queryString = Request.QueryString;
             _pageSize = queryString["pageSize"]?.ToInt32() ?? DefaultPageSize;
-            _pageIndex = queryString["pageIndex"]?.ToInt32() ?? 0;
+            _pageIndex = queryString["pageIndex"]?.ToInt32() - 1  ?? 0;
         }
 
         private void SetOrderListDataSource(int pageIndex, int pageSize)
