@@ -55,6 +55,7 @@
                         <li><a runat="server" href="~/About">關於</a></li>
                         <li><a runat="server" href="~/Contact">連絡人</a></li>
                         <li><a runat="server" href="~/Order/List">Orders</a></li>
+                        <li><a runat="server" href="~/Order/List2">Orders2</a></li>
                     </ul>
                 </div>
             </div>

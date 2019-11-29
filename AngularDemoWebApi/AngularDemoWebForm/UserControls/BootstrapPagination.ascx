@@ -1,9 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="BootstrapPagination.ascx.cs" Inherits="AngularDemoWebForm.UserControls.BootstrapPagination" %>
 
-<style>
-    
-</style>
-
 <nav aria-label="Page navigation">
     <ul class="pagination <%: Positon.Equals("right", StringComparison.CurrentCultureIgnoreCase) ? "pull-right" : string.Empty %> ">
         <% if (PageIndex > 1)
