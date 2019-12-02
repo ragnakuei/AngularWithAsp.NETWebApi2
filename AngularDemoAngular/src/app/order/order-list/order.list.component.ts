@@ -18,7 +18,7 @@ import { OrderConfirmDeleteDialogComponent } from "../order-confirm-delete-dialo
   ]
 })
 export class OrderListComponent implements OnInit {
-  displayedColumns: string[] = [
+  private displayedColumns: string[] = [
     "OrderID",
     "CustomerID",
     "EmployeeID",
@@ -36,14 +36,14 @@ export class OrderListComponent implements OnInit {
     "Management"
   ];
 
-  orderListDataSource = new MatTableDataSource<OrderListItem>();
+  private orderListDataSource = new MatTableDataSource<OrderListItem>();
 
   @ViewChild(MatPaginator, { static: true })
-  paginator: MatPaginator;
+  private paginator: MatPaginator;
 
-  totalCount: number;
+  private totalCount: number;
 
-  list: OrderList[] = [];
+  private list: OrderList[] = [];
 
   constructor(
     private orderService: OrderService,
@@ -52,7 +52,7 @@ export class OrderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getOrderList(1, 10);
+    this.getOrderList(0, 10);
 
     this.paginator.page.subscribe((page: PageEvent) => {
       this.getOrderList(page.pageIndex, page.pageSize);
@@ -69,16 +69,18 @@ export class OrderListComponent implements OnInit {
     );
   }
 
-  goToDetailPage(orderId:number, isReadonly : boolean){
-    const navigationExtras: NavigationExtras = {state: {isReadonly: isReadonly}};
-    this.router.navigate(['/order/detail', orderId], navigationExtras);
+  private goToDetailPage(orderId: number, isReadonly: boolean) {
+    const navigationExtras: NavigationExtras = {
+      state: { isReadonly: isReadonly }
+    };
+    this.router.navigate(["/order/detail", orderId], navigationExtras);
   }
 
-  onSelect(orderId: number) {
+  private onSelect(orderId: number) {
     console.log(orderId);
   }
 
-  openDeleteDialog(orderId: number): void {
+  private openDeleteDialog(orderId: number): void {
     const dialogRef = this.dialog.open(OrderConfirmDeleteDialogComponent, {
       width: "250px",
       data: orderId
@@ -88,7 +90,7 @@ export class OrderListComponent implements OnInit {
       console.log("The dialog was closed");
 
       if (result === true) {
-        this.getOrderList(this.paginator.pageIndex, this.paginator.pageSize); 
+        this.getOrderList(this.paginator.pageIndex, this.paginator.pageSize);
       }
     });
   }
