@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
 using BusinessLogic.Configuration;
 using Dapper;
 using SharedLibrary.Dto;
@@ -14,104 +13,48 @@ namespace BusinessLogic.OrderService
 {
     public class OrderService : IOrderService
     {
-        private readonly IConfigurationService _configurationService;
+        private readonly string _connectionString;
 
         public OrderService(IConfigurationService configurationService)
         {
-            _configurationService = configurationService;
+            _connectionString = configurationService.GetConnectionString("Northwind");
         }
 
         public OrderListDto[] GetOrderList()
         {
-            var orders = Enumerable.Empty<Order>();
-            var orderDetails = Enumerable.Empty<int>();
-
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            var result = Enumerable.Empty<OrderListDto>();
+            
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
-select *
-from dbo.Orders
-
-select od.OrderID
-from dbo.[Order Details] od
+SELECT OrderID,
+       CustomerID,
+       EmployeeID,
+       OrderDate,
+       RequiredDate,
+       ShippedDate,
+       ShipVia,
+       Freight,
+       ShipName,
+       ShipAddress,
+       ShipCity,
+       ShipRegion,
+       ShipPostalCode,
+       ShipCountry,
+       od.DetailCount
+FROM dbo.Orders o
+    OUTER APPLY (
+                    SELECT count(0) AS DetailCount
+                    FROM dbo.[Order Details] od
+                    WHERE od.OrderID = o.OrderID
+                ) od
 ";
                 var gridReader = connection.QueryMultiple(sql);
 
-                orders = gridReader.Read<Order>();
-                orderDetails = gridReader.Read<int>();
+                result = gridReader.Read<OrderListDto>();
             }
 
-            var orderDetailCount = orderDetails.GroupBy(od => od)
-                                               .ToDictionary(od => od.Key, od => od.Count());
-
-            var result = orders.Select(o =>
-                                       {
-                                           return new OrderListDto
-                                                  {
-                                                      OrderID = o.OrderID,
-                                                      CustomerID = o.CustomerID,
-                                                      EmployeeID = o.EmployeeID,
-                                                      OrderDate = o.OrderDate,
-                                                      RequiredDate = o.RequiredDate,
-                                                      ShippedDate = o.ShippedDate,
-                                                      ShipVia = o.ShipVia,
-                                                      Freight = o.Freight,
-                                                      ShipName = o.ShipName,
-                                                      ShipAddress = o.ShipAddress,
-                                                      ShipCity = o.ShipCity,
-                                                      ShipRegion = o.ShipRegion,
-                                                      ShipPostalCode = o.ShipPostalCode,
-                                                      ShipCountry = o.ShipCountry,
-                                                      DetailCount = orderDetailCount.GetValue(o.OrderID)
-                                                  };
-                                       }).ToArray();
-            return result;
-        }
-
-        public async Task<OrderListDto[]> GetOrderListAsync()
-        {
-            var orders = Enumerable.Empty<Order>();
-            var orderDetails = Enumerable.Empty<int>();
-
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
-            {
-                var sql = @"
-select *
-from dbo.Orders
-
-select od.OrderID
-from dbo.[Order Details] od
-";
-                var gridReader = await connection.QueryMultipleAsync(sql);
-
-                orders = gridReader.Read<Order>();
-                orderDetails = gridReader.Read<int>();
-            }
-
-            var orderDetailCount = orderDetails.GroupBy(od => od)
-                                               .ToDictionary(od => od.Key, od => od.Count());
-            var result = orders.Select(o =>
-                                       {
-                                           return new OrderListDto
-                                                  {
-                                                      OrderID = o.OrderID,
-                                                      CustomerID = o.CustomerID,
-                                                      EmployeeID = o.EmployeeID,
-                                                      OrderDate = o.OrderDate,
-                                                      RequiredDate = o.RequiredDate,
-                                                      ShippedDate = o.ShippedDate,
-                                                      ShipVia = o.ShipVia,
-                                                      Freight = o.Freight,
-                                                      ShipName = o.ShipName,
-                                                      ShipAddress = o.ShipAddress,
-                                                      ShipCity = o.ShipCity,
-                                                      ShipRegion = o.ShipRegion,
-                                                      ShipPostalCode = o.ShipPostalCode,
-                                                      ShipCountry = o.ShipCountry,
-                                                      DetailCount = orderDetailCount.GetValue(o.OrderID)
-                                                  };
-                                       }).ToArray();
-            return result;
+            return result.ToArray();
         }
 
         public OrderDto GetOrder(int orderId)
@@ -119,7 +62,7 @@ from dbo.[Order Details] od
             Order order = null;
             var orderDetails = Enumerable.Empty<OrderDetail>();
 
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 select o.*
@@ -167,7 +110,7 @@ where od.OrderID = @orderId
 
         public int CreateOrder(OrderDto orderDto)
         {
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 declare @maxOrderId int
@@ -229,7 +172,7 @@ select @maxOrderId
 
         public void UpdateOrder(int orderId, OrderDto orderDto)
         {
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 update dbo.orders
@@ -319,7 +262,7 @@ from @OrderDetails
 
         public void DeleteOrder(int orderId)
         {
-            using (var connection = new SqlConnection(_configurationService.GetConnectionString("Northwind")))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = @"
 DELETE dbo.[Order Details]
