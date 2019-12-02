@@ -1,0 +1,19 @@
+<td>
+    <a style="cursor: pointer;" [routerLink]="['/order/detail/',orderList.OrderID]" routerLinkActive="active">
+        {{ orderList.OrderID }}
+    </a>
+</td>
+<td>{{ orderList.CustomerID }}</td>
+<td>{{ orderList.EmployeeID }}</td>
+<td>{{ orderList.OrderDate | date: 'yyyy-MM-dd' }}</td>
+<td>{{ orderList.RequiredDate | date: 'yyyy-MM-dd' }}</td>
+<td>{{ orderList.ShippedDate | date: 'yyyy-MM-dd' }}</td>
+<td>{{ orderList.ShipVia }}</td>
+<td>{{ orderList.Freight }}</td>
+<td>{{ orderList.ShipName }}</td>
+<td>{{ orderList.ShipAddress }}</td>
+<td>{{ orderList.ShipCity }}</td>
+<td>{{ orderList.ShipRegion }}</td>
+<td>{{ orderList.ShipPostalCode }}</td>
+<td>{{ orderList.ShipCountry }}</td>
+<td>{{ orderList.DetailCount }}</td>

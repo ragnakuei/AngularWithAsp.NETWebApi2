@@ -1,0 +1,47 @@
+<h2>OrderDetail</h2>
+
+<div *ngIf="order">
+	<p>OrderID:{{order?.OrderID}}</p>
+	<p>CustomerID:{{order?.CustomerID}}</p>
+	<p>EmployeeID:{{order?.EmployeeID}}</p>
+	<p>OrderDate:{{order?.OrderDate | date: 'yyyy-MM-dd'}}</p>
+	<p>RequiredDate:{{order?.RequiredDate | date: 'yyyy-MM-dd'}}</p>
+	<p>ShippedDate:{{order?.ShippedDate | date: 'yyyy-MM-dd'}}</p>
+	<p>ShipVia:{{order?.ShipVia}}</p>
+	<p>Freight:{{order?.Freight}}</p>
+	<p>ShipName:{{order?.ShipName}}</p>
+	<p>ShipAddress:{{order?.ShipAddress}}</p>
+	<p>ShipCity:{{order?.ShipCity}}</p>
+	<p>ShipRegion:{{order?.ShipRegion}}</p>
+	<p>ShipPostalCode:{{order?.ShipPostalCode}}</p>
+	<p>ShipCountry:{{order?.ShipCountry}}</p>
+
+	<div>
+		<p>Details:</p>
+		<table>
+			<thead>
+				<tr>
+					<th>ProductID</th>
+					<th>UnitPrice</th>
+					<th>Quantity</th>
+					<th>Discount</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let detail of order?.Details">
+					<td>{{detail?.ProductID}}</td>
+					<td>{{detail?.UnitPrice}}</td>
+					<td>{{detail?.Quantity}}</td>
+					<td>{{detail?.Discount}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<a style="cursor: pointer;" [routerLink]="['/order/edit/', order?.OrderID]" routerLinkActive="active">
+		Edit
+	</a>
+	<a style="cursor: pointer;" [routerLink]="['/order/delete/', order?.OrderID]" routerLinkActive="active">
+		Delete
+	</a>
+</div>
