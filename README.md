@@ -106,7 +106,15 @@
 
    - order.list.component.ts 第 26 行，以 console.log() 來輸出錯誤訊息
 
-1.
+1. 開啟 app.module.ts
+
+   - 刪除 OrderListComponent 的引用
+
+   - 以瀏覽器開啟 http://localhost:4200/order
+
+   - 顯示錯誤訊息 `Component OrderListComponent is not part of any NgModule or the module has not been imported into your module.`
+
+   - 原因是 NgModule 未註冊 OrderListComponent
 
 ### 發佈 Angular
 
