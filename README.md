@@ -49,7 +49,7 @@
 
 ### [開發環境](https://angular.io/resources)
 
-- Editor : [Visual Studio Code](https://code.visualstudio.com/) 目前市佔率[極高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
+- Editor : [Visual Studio Code](https://code.visualstudio.com/) 目前[市佔率極高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
 
   - Plugins：
 
