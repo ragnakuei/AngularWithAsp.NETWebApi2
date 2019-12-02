@@ -4,6 +4,7 @@
 
 - [TypeScript](https://www.typescriptlang.org/docs/home.html)
 - DI (Dependency Injection) Design Pattern
+- [RxJS](https://angular.io/guide/rx-library)
 
 ---
 
@@ -22,34 +23,49 @@
 
      - 至[官網](https://github.com/coreybutler/nvm-windows/releases)下載 nvm-setup.zip
      - 安裝 nvm
-     - 安裝完畢後，輸入指令 nvm version 確認已安裝成功
+     - 安裝完畢後，至命令提示字元下，輸入指令 `nvm version` 確認已安裝成功
 
    - 透過 nvm 安裝 Node.js
 
-     - nvm install 10.9.0 - 會一併安裝 npm
+     - `nvm install 10.9.0` - 會一併安裝 npm
 
    - 使用指定的版本的 Node.js
 
-     - nvm use 10.9,0
-     - 可透過 nvm list 來確認目前使用的 Node.js 版本
+     - `nvm use 10.9,0`
+     - 可透過 `nvm list` 來確認目前使用的 Node.js 版本
+
+   - 確認 npm 已安裝
+
+     - 透過 `npm -v` 確認 npm 已安裝 及 安裝的版本
 
 1. 安裝 [Angular CLI](https://cli.angular.io/)
 
-   - npm install -g @angular/cli
+   - `npm install -g @angular/cli`
 
    > 注意：不同的 npm 套件會依照 npm 的版本進行安裝。
 
 1. 建立 Angular 專案
 
-   - ng new my-app
+   - `ng new my-app`
+     - Would you like to add Angular routing? > 輸入 Y
+     - Which stylesheet format would you like to use? > CSS
+
+1. 進入專案資料夾
+
+   - `cd my-app`
+
+1. 安裝相依 packages
+
+   - `npm install`
 
 1. 執行網站
 
-   - ng serve
+   - `ng serve`
+   - 以瀏覽器開啟 http://localhost:4200
 
 ### [開發環境](https://angular.io/resources)
 
-- Editor : [Visual Studio Code](https://code.visualstudio.com/) 目前市佔率[極高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
+- Editor : [Visual Studio Code](https://code.visualstudio.com/) 目前[市佔率極高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
 
   - Plugins：
 
@@ -63,6 +79,42 @@
 
 - [資料夾結構與設定檔](https://ithelp.ithome.com.tw/articles/10203534)
 - [NgModuel 與 Component](https://ithelp.ithome.com.tw/articles/10204133)
+- 建立 Component
+
+  - `code .` - 啟動 Visual Studio Code
+  - 開啟 Vistual Studio Code 中的 Terminal，選擇 Select Default Shell，切換至 Command Prompt
+  - `cd src\app` - 切換至 app component 資料夾中
+  - `ng g c Home` - 建立 Home 資料夾及 Component
+  - `ng g c Order` - 建立 Order 資料夾及 Component
+  - 修改 app.route.moduele.ts
+
+    ```typescript
+    const routes: Routes = [
+      { path: "", component: HomeComponent },
+      { path: "order", component: OrderComponent }
+    ];
+    ```
+
+  - 以瀏覽器開啟 http://localhost:4200
+  - 以瀏覽器開啟 http://localhost:4200/order
+
+- DEMO CRUD - 以 Visual Studio Code 開啟 AngularDemoAngular 專案資料夾
+
+### Debug Angular
+
+1. 未開啟後端 Web API 2 情況下，以瀏覽器開啟 http://localhost:4200/order
+
+   - order.list.component.ts 第 26 行，以 console.log() 來輸出錯誤訊息
+
+1. 開啟 app.module.ts
+
+   - 刪除 OrderListComponent 的引用
+
+   - 以瀏覽器開啟 http://localhost:4200/order
+
+   - 顯示錯誤訊息 `Component OrderListComponent is not part of any NgModule or the module has not been imported into your module.`
+
+   - 原因是 NgModule 未註冊 OrderListComponent
 
 ### 發佈 Angular
 
@@ -129,4 +181,3 @@
   - [Using Angular Augury to Debug Your Code](https://www.sitepoint.com/angular-augury-debug-code/)
 
   - [Angular Codelab](https://codelab.fun/)
-  
