@@ -11,7 +11,7 @@
 </button>
 
 <mat-paginator
-  showFirstLastButtons
+#paginatorTop
   [length]="totalCount"
   [pageIndex]="0"
   [pageSize]="10"
@@ -133,7 +133,7 @@
 </table>
 
 <mat-paginator
-  showFirstLastButtons
+#paginatorBottom
   [length]="totalCount"
   [pageIndex]="0"
   [pageSize]="10"

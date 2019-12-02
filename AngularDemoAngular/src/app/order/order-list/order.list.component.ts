@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewChildren } from "@angular/core";
 import { ActivatedRoute, Router, NavigationExtras } from "@angular/router";
 import { OrderList, OrderListItem } from "src/app/models/OrderList";
 import { OrderService } from "../order.service";
@@ -18,7 +18,8 @@ import { OrderConfirmDeleteDialogComponent } from "../order-confirm-delete-dialo
   ]
 })
 export class OrderListComponent implements OnInit {
-  private displayedColumns: string[] = [
+  protected orderListDataSource = new MatTableDataSource<OrderListItem>();
+  protected displayedColumns: string[] = [
     "OrderID",
     "CustomerID",
     "EmployeeID",
@@ -36,12 +37,13 @@ export class OrderListComponent implements OnInit {
     "Management"
   ];
 
-  private orderListDataSource = new MatTableDataSource<OrderListItem>();
+  protected totalCount: number;
 
-  @ViewChild(MatPaginator, { static: true })
-  private paginator: MatPaginator;
+  @ViewChild("paginatorTop", { static: true })
+  private paginatorTop: MatPaginator;
 
-  private totalCount: number;
+  @ViewChild("paginatorBottom", { static: true })
+  private paginatorBottom: MatPaginator;
 
   private list: OrderList[] = [];
 
@@ -51,10 +53,14 @@ export class OrderListComponent implements OnInit {
     public dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.getOrderList(0, 10);
 
-    this.paginator.page.subscribe((page: PageEvent) => {
+    this.paginatorTop.page.subscribe((page: PageEvent) => {
+      this.getOrderList(page.pageIndex, page.pageSize);
+    });
+
+    this.paginatorBottom.page.subscribe((page: PageEvent) => {
       this.getOrderList(page.pageIndex, page.pageSize);
     });
   }
@@ -64,6 +70,11 @@ export class OrderListComponent implements OnInit {
       resp => {
         this.orderListDataSource.data = resp.Items;
         this.totalCount = resp.TotalCount;
+
+        this.paginatorTop.pageIndex = pageIndex;
+        this.paginatorTop.pageSize = pageSize;
+        this.paginatorBottom.pageIndex = pageIndex;
+        this.paginatorBottom.pageSize = pageSize;
       },
       err => console.log("Error", err)
     );
@@ -90,7 +101,10 @@ export class OrderListComponent implements OnInit {
       console.log("The dialog was closed");
 
       if (result === true) {
-        this.getOrderList(this.paginator.pageIndex, this.paginator.pageSize);
+        this.getOrderList(
+          this.paginatorTop.pageIndex,
+          this.paginatorTop.pageSize
+        );
       }
     });
   }
