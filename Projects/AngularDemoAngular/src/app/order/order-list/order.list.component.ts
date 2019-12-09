@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ViewChildren } from "@angular/core";
 import { ActivatedRoute, Router, NavigationExtras } from "@angular/router";
-import { OrderList, OrderListItem } from "src/app/models/OrderList";
+import { OrderList } from "src/app/models/OrderList";
+import { OrderListItem } from "src/app/models/OrderListItem";
 import { OrderService } from "../order.service";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";

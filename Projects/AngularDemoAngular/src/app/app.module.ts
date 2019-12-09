@@ -40,7 +40,6 @@ import { OrderComponent } from "./order/order.component";
 import { OrderListComponent } from "./order/order-list/order.list.component";
 import { OrderDetailComponent } from "./order/order-detail/order-detail.component";
 import { OrderCreateComponent } from "./order/order-create/order-create.component";
-import { OrderDeleteComponent } from "./order/order-delete/order-delete.component";
 import { AppHeaderComponent } from "./app-header/app-header.component";
 import { AppFooterComponent } from "./app-footer/app-footer.component";
 import { AppSidenavComponent } from "./app-sidenav/app-sidenav.component";
@@ -55,7 +54,6 @@ import { OrderConfirmDeleteDialogComponent } from "./order/order-confirm-delete-
     OrderListComponent,
     OrderDetailComponent,
     OrderCreateComponent,
-    OrderDeleteComponent,
     AppHeaderComponent,
     AppFooterComponent,
     AppSidenavComponent,

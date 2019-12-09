@@ -7,7 +7,6 @@ import { OrderComponent } from "./order/order.component";
 import { OrderListComponent } from "./order/order-list/order.list.component";
 import { OrderDetailComponent } from "./order/order-detail/order-detail.component";
 import { OrderCreateComponent } from "./order/order-create/order-create.component";
-import { OrderDeleteComponent } from "./order/order-delete/order-delete.component";
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -18,7 +17,6 @@ const routes: Routes = [
       { path: "", component: OrderListComponent },
       { path: "create", component: OrderCreateComponent },
       { path: "detail/:id", component: OrderDetailComponent },
-      { path: "delete/:id", component: OrderDeleteComponent }
     ]
   }
 ];
