@@ -100,6 +100,10 @@
 
 - DEMO CRUD - 以 Visual Studio Code 開啟 AngularDemoAngular 專案資料夾
 
+    - 如果之前未新增 Route，可透過 `ng generate module app-routing --flat --module=app` 來新增
+
+    - [Angular Lifecycle Hooks](https://ithelp.ithome.com.tw/articles/10194566)
+
 ### Debug Angular
 
 1. 未開啟後端 Web API 2 情況下，以瀏覽器開啟 http://localhost:4200/order

@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 // Service
-import { OrderService } from "./order/order.service";
+import { OrderService } from './order/order.service';
 
 // Component
 import { HomeComponent } from './home/home.component';
@@ -20,26 +20,24 @@ import { OrderCreateComponent } from './order/order-create/order-create.componen
 import { OrderDeleteComponent } from './order/order-delete/order-delete.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    OrderComponent,
-    OrderListComponent,
-    OrderDetailComponent,
-    OrderItemComponent,
-    OrderEditComponent,
-    OrderCreateComponent,
-    OrderDeleteComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    ReactiveFormsModule
-  ],
-  providers: [OrderService],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        HomeComponent,
+        OrderComponent,
+        OrderListComponent,
+        OrderDetailComponent,
+        OrderItemComponent,
+        OrderEditComponent,
+        OrderCreateComponent,
+        OrderDeleteComponent,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+    ],
+    providers: [OrderService],
+    bootstrap: [AppComponent],
 })
-export class AppModule {
-
-}
+export class AppModule {}
