@@ -182,4 +182,4 @@
 
   - [Angular Codelab](https://codelab.fun/)
 
-- [Angular Material](https://material.angular.io/) - 切換至 Branch `AngularMaterial`
+- [Angular Material](https://material.angular.io/)

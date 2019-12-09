@@ -2,6 +2,6 @@
 {
     public interface IConfigurationService
     {
-        string GetConnectionString(string northwind);
+        string GetConnectionString(string name);
     }
 }
