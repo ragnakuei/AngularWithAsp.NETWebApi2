@@ -155,7 +155,10 @@ declare @maxOrderId int
 select @maxOrderId = max(od.OrderID) + 1
 from dbo.Orders od
 
-INSERT into dbo.Orders(CustomerID,
+SET IDENTITY_INSERT Orders ON;
+
+INSERT into dbo.Orders(OrderID,
+                       CustomerID,
                        EmployeeID,
                        OrderDate,
                        RequiredDate,
@@ -168,7 +171,8 @@ INSERT into dbo.Orders(CustomerID,
                        ShipRegion,
                        ShipPostalCode,
                        ShipCountry)
-values (@CustomerID,
+values (@maxOrderId,
+        @CustomerID,
         @EmployeeID,
         @OrderDate,
         @RequiredDate,
@@ -185,6 +189,8 @@ values (@CustomerID,
 insert into dbo.[Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount)
 select @maxOrderId, ProductID, UnitPrice, Quantity, Discount
 from @OrderDetails
+
+SET IDENTITY_INSERT Orders OFF;
 
 select @maxOrderId
 ";
