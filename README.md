@@ -69,7 +69,7 @@
 
   - [Visual Studio Code](https://code.visualstudio.com/)
 
-    - 目前[市佔率極高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
+    - 目前[市佔率高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
 
     - Plugins：
 
