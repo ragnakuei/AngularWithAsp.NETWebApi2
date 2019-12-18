@@ -65,11 +65,15 @@
 
 ### [開發環境](https://angular.io/resources)
 
-- Editor : [Visual Studio Code](https://code.visualstudio.com/) 目前[市佔率極高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
+- Editor :
 
-  - Plugins：
+  - [Visual Studio Code](https://code.visualstudio.com/)
 
-    - [Angular Extension Pack](https://marketplace.visualstudio.com/items?itemName=doggy8088.angular-extension-pack)
+    - 目前[市佔率極高](https://insights.stackoverflow.com/survey/2019#development-environments-and-tools)的 Editor
+
+    - Plugins：
+
+      - [Angular Extension Pack](https://marketplace.visualstudio.com/items?itemName=doggy8088.angular-extension-pack)
 
 - Chrome Extension：
 
@@ -100,9 +104,9 @@
 
 - DEMO CRUD - 以 Visual Studio Code 開啟 AngularDemoAngular 專案資料夾
 
-    - 如果之前未新增 Route，可透過 `ng generate module app-routing --flat --module=app` 來新增
+  - 如果之前未新增 Route，可透過 `ng generate module app-routing --flat --module=app` 來新增
 
-    - [Angular Lifecycle Hooks](https://ithelp.ithome.com.tw/articles/10194566)
+  - [Angular Lifecycle Hooks](https://ithelp.ithome.com.tw/articles/10194566)
 
 ### Debug Angular
 
