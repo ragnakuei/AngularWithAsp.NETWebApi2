@@ -31,7 +31,7 @@
 
    - 使用指定的版本的 Node.js
 
-     - `nvm use 10.9,0`
+     - `nvm use 10.9.0`
      - 可透過 `nvm list` 來確認目前使用的 Node.js 版本
 
    - 確認 npm 已安裝
